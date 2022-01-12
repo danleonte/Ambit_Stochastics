@@ -1,0 +1,6 @@
+###### Requirements with Version Specifiers ######
+
+numpy >= 1.21.4
+pandas >= 1.3.4
+scipy >= 1.7.2
+import_file >= 1.11
