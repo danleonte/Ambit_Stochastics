@@ -33,6 +33,11 @@
 import pandas as pd
 import numpy as np
 
+def check1(nr_trawls,nr_simulations):
+    #assert (isinstance(tau,float) or isinstance(tau,int)) and tau &gt; 0
+    assert isinstance(nr_trawls,int) and nr_trawls &gt;0
+    assert isinstance(nr_simulations,int) and nr_simulations &gt;0
+    
 def check_spatio_temporal_positions(x,tau,k_s,k_t,nr_simulations):
     assert (isinstance(x,float) or isinstance(x,int)) and x &gt; 0
     assert (isinstance(tau,float) or isinstance(tau,int)) and tau &gt; 0
@@ -79,6 +84,21 @@ def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params)
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
+<dt id="ambit_stochastics.helpers.input_checks.check1"><code class="name flex">
+<span>def <span class="ident">check1</span></span>(<span>nr_trawls, nr_simulations)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check1(nr_trawls,nr_simulations):
+    #assert (isinstance(tau,float) or isinstance(tau,int)) and tau &gt; 0
+    assert isinstance(nr_trawls,int) and nr_trawls &gt;0
+    assert isinstance(nr_simulations,int) and nr_simulations &gt;0</code></pre>
+</details>
+</dd>
 <dt id="ambit_stochastics.helpers.input_checks.check_levy_seed_params"><code class="name flex">
 <span>def <span class="ident">check_levy_seed_params</span></span>(<span>gaussian_part_params, jump_part_name, jump_part_params)</span>
 </code></dt>
@@ -161,6 +181,7 @@ of the Gaussian and Jump parts are floats</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
+<li><code><a title="ambit_stochastics.helpers.input_checks.check1" href="#ambit_stochastics.helpers.input_checks.check1">check1</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_levy_seed_params" href="#ambit_stochastics.helpers.input_checks.check_levy_seed_params">check_levy_seed_params</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_spatio_temporal_positions" href="#ambit_stochastics.helpers.input_checks.check_spatio_temporal_positions">check_spatio_temporal_positions</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_trawl_function" href="#ambit_stochastics.helpers.input_checks.check_trawl_function">check_trawl_function</a></code></li>

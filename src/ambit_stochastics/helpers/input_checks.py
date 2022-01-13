@@ -3,8 +3,8 @@
 import pandas as pd
 import numpy as np
 
-def check_temporal_positions(tau,nr_trawls,nr_simulations):
-    assert (isinstance(tau,float) or isinstance(tau,int)) and tau > 0
+def check1(nr_trawls,nr_simulations):
+    #assert (isinstance(tau,float) or isinstance(tau,int)) and tau > 0
     assert isinstance(nr_trawls,int) and nr_trawls >0
     assert isinstance(nr_simulations,int) and nr_simulations >0
     
