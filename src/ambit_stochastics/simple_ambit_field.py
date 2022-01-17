@@ -7,9 +7,11 @@ from scipy.integrate import quad
 import numpy as np
 import math
 import time
+from numba import njit
 
 from .helpers.input_checks import check_trawl_function
-from .helpers.input_checks import check_levy_seed_params
+from .helpers.input_checks  import check_jump_part_and_params
+from .helpers.input_checks  import check_gaussian_params
 from .helpers.input_checks import check_spatio_temporal_positions
 
 from .helpers.sampler import gaussian_part_sampler
@@ -17,10 +19,10 @@ from .helpers.sampler import jump_part_sampler
 ###################################################################
 
 class simple_ambit_field:
-    def __init__(self, x, tau, k_s, k_t, nr_simulations, trawl_function=None, decorrelation_time=-np.inf,
+    def __init__(self, x, tau, k_s, k_t, nr_simulations, ambit_function=None, decorrelation_time=-np.inf,
                  gaussian_part_params=None, jump_part_name=None, jump_part_params=None,
                  batch_size=None, total_nr_samples=None, values=None):
-        """Container class for the analysis, simulation and inference of ambit fields of the
+        """Container class for the simulation, parameter inference and forecasting of ambit fields of the
         form \(Y_t(x) = L(A+(x,t))\).
         
         Args:
@@ -29,14 +31,16 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          trawl_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\)
-          with \(\phi(1) =0, \phi(t) =0\) for \(t>0\).
+          ambit_function: a non-negative, continuous, strictly increasing function
+          \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(1) > 0, \phi(t) =0\) for \(t>0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
-          gaussian_part_params:                                                             
-          jump_part_name:
-          jump_part_params:
-          batch_size:
-          total_nr_samples:
+          gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
+          jump_part_name: tuple with the parameters of the jump part distribution check helpers.sampler 
+          for the parametrisation.
+          jump_part_params: string: name of the jump part distribution. check helpers.sampler for the parametrisation.
+          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method,
+          in order to optimise for cache memory.
+          total_nr_samples: positive integer: total number of points to be used in the `approximate_slices` method.
           values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or 
           simulated with the method `simple_ambit_field.simulate`.
         """
@@ -50,7 +54,7 @@ class simple_ambit_field:
         self.nr_simulations = nr_simulations
 
         ### simulation parameters ###
-        self.trawl_function = trawl_function
+        self.ambit_function = ambit_function
         self.gaussian_part_params = gaussian_part_params
         self.jump_part_name = jump_part_name
         self.jump_part_params = jump_part_params
@@ -63,7 +67,7 @@ class simple_ambit_field:
         ### if decorrelation_time =  -inf, I_t = k_t - T/tau,
         ### where T = tau * floor{\phi^{-1}(x)/tau + 1} ###
         self.I_t = None
-        self.I_s = None   #I_s = math.ceil(self.trawl_function(0)/self.x)
+        self.I_s = None   #I_s = math.ceil(self.ambit_function(0)/self.x)
 
 
         ### minimal slices on t > T/tau ###
@@ -96,11 +100,11 @@ class simple_ambit_field:
         self.inferred_parameters = None
 
         # self.inferred_parameters is a list with elements dictionaries of the form
-        # {'inferred_trawl_function_name':   , inferred_trawl_function_params:    ,
+        # {'inferred_ambit_function_name':   , inferred_ambit_function_params:    ,
         # 'inferred_gaussian_params':        ,'inferred_jump_params':              }
 
-        # inferred_trawl_function        is 'exponential','gamma', 'ig' or a lambda function
-        # inferred_trawl_function_params is a tuple
+        # inferred_ambit_function        is 'exponential','gamma', 'ig' or a lambda function
+        # inferred_ambit_function_params is a tuple
         # inferred_gaussian_params       is a tuple containing the mean and scale
         # inferred_jump_params           is a dictionary containing the name of the distribution
         # and its params, such as {'gamma': (1,1)}
@@ -139,7 +143,7 @@ class simple_ambit_field:
         x_ik = np.subtract.outer(points_x, ambit_x_coords)
         x_ikl = np.repeat(x_ik[:, :, np.newaxis], repeats=self.I_t, axis=2)
         t_il = np.subtract.outer(points_t, ambit_t_coords)
-        phi_t_ikl = np.repeat(self.trawl_function(
+        phi_t_ikl = np.repeat(self.ambit_function(
             t_il)[:, np.newaxis, :], repeats=self.I_s, axis=1)
         range_indicator = x_ik > 0
         range_indicator = np.repeat(
@@ -169,8 +173,8 @@ class simple_ambit_field:
             self.batch_size = self.total_nr_samples // 10
         self.total_nr_samples = self.batch_size * (self.total_nr_samples // self.batch_size)
 
-        # rectangle to simulate uniform rvs in space-time is [x, x + trawl_function(0)] x [0,tau]
-        low_x, high_x = self.x, self.x + self.trawl_function(0)
+        # rectangle to simulate uniform rvs in space-time is [x, x + ambit_function(0)] x [0,tau]
+        low_x, high_x = self.x, self.x + self.ambit_function(0)
         low_t, high_t = max(self.tau + self.decorrelation_time, 0), self.tau
         dict_ = dict()
 
@@ -189,8 +193,8 @@ class simple_ambit_field:
             # bottom of A_11: must be in A_01; condition: (points_x < phi(points_t - tau)) *  (points_x  > 0)
 
             indicator_in_A_11 = (
-                points_x - self.x < self.trawl_function(points_t - self.tau)) * (points_x - self.x > 0)
-            indicator_in_A_01 = (points_x < self.trawl_function(
+                points_x - self.x < self.ambit_function(points_t - self.tau)) * (points_x - self.x > 0)
+            indicator_in_A_01 = (points_x < self.ambit_function(
                 points_t - self.tau)) * (points_x > 0)
             indicator_bottom_of_A_11 = indicator_in_A_11 * (~indicator_in_A_01)
 
@@ -228,17 +232,21 @@ class simple_ambit_field:
         `correction_slices_areas`.
         """
         
-        self.correction_slices_areas = [quad(self.trawl_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
-                                        for i in range(1,self.k_t)] + [quad(self.trawl_function,a= -np.inf,b=T - self.k_t,limit=500)[0]]
+        self.correction_slices_areas = [quad(self.ambit_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
+                                        for i in range(1,self.k_t)] + [quad(self.ambit_function,a= -np.inf,b=T - self.k_t,limit=500)[0]]
  
         
-
+    @njit
     def simulate_finite_decorrelation_time(self):
         """implementation of algorithm  [nr to be added] in [paper link]"""
         Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         Y_jump     = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         for k in range(self.k_s + self.I_s -1):
             for l in range(self.k_t + self.I_t - 1):
+                
+                gaussian_to_add = np.zeros((self.k_s,self.k_t))
+                jump_to_add     = np.zeros((self.k_s,self.k_t))
+                
                 #simulate S.
                 for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
                     tiled_area_S = np.tile(area_S,(self.nr_simulations,1))
@@ -246,13 +254,19 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                    Y_jump[:,k:k+self.I_s,l:l+self.I_t] +=  slice_S * jump_sample_slice[:,:,np.newaxis]
-
+                    gaussian_to_add += slice_S * gaussian_sample_slice[:,:,np.newaxis]
+                    jump_to_add     += slice_S * jump_sample_slice[:,:,np.newaxis]
+                    
+                Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
+                Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
+ 
         self.gaussian_values =  Y_gaussian[:,self.I_s-1:self.I_s+self.k_s-1,self.I_t-1:self.I_t+self.k_t-1]
         self.jump_values     =  Y_jump[:,self.I_s-1:self.I_s+self.k_s-1,self.I_t-1:self.I_t+self.k_t-1]
 
+    @njit
     def simulate_infinite_decorrelation_time(self,T):
+        """implementation of algorithm  [nr to be added] in [paper link]"""
+
         assert T/self.tau == int(T/self.tau)
         T_tau = -int(T/self.tau)
         
@@ -277,8 +291,10 @@ class simple_ambit_field:
         #implementation of algorithm [] from []
         for k in range(self.k_s + self.I_s -1):
             for l in range(self.k_t +  T_tau):
-                if k %5 ==0 and l%5 ==0:
-                    print(k,l)
+
+                gaussian_to_add = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+                jump_to_add     = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+                
                 for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
                     tiled_area_S = np.tile(area_S,(self.nr_simulations,1))
                     #simulate S
@@ -286,8 +302,11 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                    Y_jump[:,k:k+self.I_s,l:l+self.I_t] +=  slice_S * jump_sample_slice[:,:,np.newaxis] 
+                    gaussian_to_add = slice_S * gaussian_sample_slice[:,:,np.newaxis] 
+                    jump_to_add     = slice_S * jump_sample_slice[:,:,np.newaxis] 
+                    
+                Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
+                Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
                     
                     
         self.gaussian_values = Y_gaussian[:,self.I_s-1:self.I_s - 1+ self.k_s,T_tau+1: T_tau+self.k_t+1]
@@ -302,26 +321,28 @@ class simple_ambit_field:
 
         # checks
         self.delete_values()
-        check_trawl_function(self.trawl_function)
-        check_levy_seed_params(self.gaussian_part_params,
-                               self.jump_part_name, self.jump_part_params)
+        check_trawl_function(self.ambit_function)
+        check_gaussian_params(self.gaussian_part_params)
+        check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+
+
 
         #set I_s
-        self.I_s = math.ceil(self.trawl_function(0)/self.x)
+        self.I_s = math.ceil(self.ambit_function(0)/self.x)
         # set I_t
         if self.decorrelation_time > -np.inf:    
             
             # decorrelation_time checks
             assert self.decorrelation_time < 0, 'please check the value of the decorrelation_time'
-            assert self.trawl_function(self.decorrelation_time) == 0,\
-                            'trawl_function(decorrelation_time) should be 0'
-            self.I_t = math.ceil(self.decorrelation_time/self.tau)
+            assert self.ambit_function(self.decorrelation_time) == 0,\
+                            'ambit_function(decorrelation_time) should be 0'
+            self.I_t = math.ceil(-self.decorrelation_time/self.tau)
             
             
 
         elif self.decorrelation_time == -np.inf:
             
-            T_tilde = fsolve(lambda t: self.trawl_function(t)-self.x,x0=-1)[0]
+            T_tilde = fsolve(lambda t: self.ambit_function(t)-self.x,x0=-1)[0]
             T = self.tau * math.floor(1 + T_tilde/self.tau)
             assert (T/self.tau).is_integer()
             
@@ -333,6 +354,7 @@ class simple_ambit_field:
             self.simulate_finite_decorrelation_time()
             
         elif self.decorrelation_time == -np.inf:
+             #self.determine_correction_slices(T)
              self.simulate_infinite_decorrelation_time(T)
 
 

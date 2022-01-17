@@ -23,14 +23,20 @@ def check_trawl_function(phi):
         
     phi_values = phi(np.linspace(-100,0,10**5))
     assert pd.Series(phi_values).is_monotonic_increasing,'trawl_function is not increasing'   
+
+#distributional checks
         
-def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params):
+def check_gaussian_params(gaussian_part_params):
         """Check if the distribution of the jump part is supported and if the parameters 
-        of the Gaussian and Jump parts are floats"""
+        of the Gaussian part are numbers"""
         #gaussian part params
         assert isinstance(gaussian_part_params,tuple),'gaussian_part_params is not a tuple'
         assert all(isinstance(i,(int,float)) for i in gaussian_part_params),'parameters of the gaussian part are not numbers'
         
+            
+def check_jump_part_and_params(jump_part_name,jump_part_params):
+        """Check if the distribution of the jump part is supported and if the parameters 
+        of the Jump parts are numbers"""
         #jump part params
         assert isinstance(jump_part_params,tuple),'jump_part_params is not a tuple'
         assert all(isinstance(i,(int,float)) for i in jump_part_params),'parameters of the jump part are not numbers'
@@ -41,6 +47,13 @@ def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params)
 
         elif jump_part_name not in [None,'gamma','cauchy','poisson']:
             raise ValueError('unknown distribution')
+            
+def check_grid_params(mesh_size,truncation_grid,times_grid):
+    assert  isinstance(mesh_size,(int,float)) and mesh_size >0,'please check mesh size'
+    assert  isinstance(truncation_grid,(int,float)) and truncation_grid < 0
+            
+def check_cpp():
+    pass
         
 
 

@@ -1,0 +1,1522 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>ambit_stochastics.trawl API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ambit_stochastics.trawl</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">###################################
+#module imports
+from scipy.integrate import quad
+import numpy as np
+import pandas as pd
+import math
+
+#from scipy.optimize import minimize
+from scipy.signal import convolve2d #flip the filter 
+#from statsmodels.tsa.stattools import acf
+#from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\
+#                           geninvgauss,poisson 
+
+#helper function imports
+from .helpers.input_checks  import check1
+from .helpers.input_checks  import check_trawl_function
+from .helpers.input_checks  import check_jump_part_and_params
+from .helpers.input_checks  import check_gaussian_params
+from .helpers.input_checks  import check_grid_params
+
+ 
+from .helpers.sampler       import gaussian_part_sampler 
+from .helpers.sampler       import jump_part_sampler
+
+#from .helpers.loss_functions import qlike_func
+#helper_module = import_file(os.path.join(Path().resolve().parent,&#39;helpers&#39;,&#39;loss_functions&#39;))
+
+#qlike = helper_module.qlike_func
+####################################
+
+class trawl:
+    def __init__(self,nr_trawls, nr_simulations, trawl_function=None, tau = None, 
+                decorrelation_time = -np.inf, mesh_size = None, times_grid = None, 
+                truncation_grid = None, truncation_cpp = None, gaussian_part_params=None, 
+                jump_part_name=None,jump_part_params=None,cpp_part_name = None, 
+                cpp_part_params = None, cpp_intensity = None, values=None):
+        &#34;&#34;&#34;A container class for the simulation, parameter inference and forecasting of trawl processes.
+        
+        The implemented simulation algorithms are the grid, slice and cpp algorithms, as described in [paper link].
+        
+        The arguments required for the `simulate` method are `nr_trawls`,`nr_simulations`,
+        `trawl_function` and `gaussian_part_params`. Further, the slice method requires `tau`,
+        `decorrelation_time`,`jump_part_name`,`jump_part_params`, the grid method requires
+        `mesh_size`,`times_grid`,`truncation_grid`,`jump_part_name`,`jump_part_params` and
+        the cpp method requires `truncation_cpp,`,`cpp_part_name`, 
+        `cpp_part_params`, `cpp_intensity`.
+               
+        Args:
+          nr_simulation: positive integer: number of simulations.
+          nr_trawls: positive integer: number of trawls on the time axis.
+          trawl_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\)
+          with \(\phi(1) =0, \phi(t) =0\) for \(t&gt;0\).
+          gaussian_part_params: tuple with the mean and standard deviation of the Gaussian Part.
+          tau: positive number: spacing between ambit sets on the time axis, used in the slice simulation method.
+          decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise, used in the slice simulation method.
+          jump_part_name: a
+          jump_part_params: b
+          truncation_grid: c
+         &#34;&#34;&#34;
+       
+        #general attributes
+        check1(nr_trawls, nr_simulations)
+        self.nr_trawls                      = nr_trawls
+        self.nr_simulations                 = nr_simulations
+        
+        #attributes required for simulation
+        self.trawl_function                 = trawl_function
+        self.gaussian_part_params           = gaussian_part_params
+
+        
+        #############################################################################     
+        ### attributes required only for the slice partition simulation algorithm ###  
+        
+        self.tau                            = tau
+        self.decorrelation_time             = decorrelation_time
+        self.I                              = None
+        self.slice_areas_matrix             = None
+        # distributional parameters of the gaussian and jump parts of the levy seed 
+        # jump_part_name and jump_part_params are also requried for the grid method
+        self.jump_part_name                 = jump_part_name
+        self.jump_part_params               = jump_part_params
+        
+        ################################################################## 
+        ### attributes required only for the grid simulation algorithm ###
+        
+        self.times_grid               = times_grid
+        self.truncation_grid          = truncation_grid       
+        self.mesh_size                = mesh_size
+        self.times_grid               = times_grid
+        self.vol                      = None
+        
+        #self.indicator_matrix               = None
+        
+        ################################################################## 
+        ### attributes required only for the cpp simulation algorithm  ###
+        
+        self.cpp_part_name   = cpp_part_name 
+        self.cpp_part_params = cpp_part_params
+        self.cpp_intensity   = cpp_intensity
+            
+        ### arrays containing the gaussian, jump and cpp parts of the simulation
+        self.gaussian_values          =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        self.jump_values              =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        self.cpp_values               =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        
+        ### passed by the user or simulated using one of the simulation methods ### 
+        self.values                   =   values 
+        
+        
+        ##################################################################
+        ### attributes required only for the cpp simulation algorithm  ###
+        
+        self.cpp_part_name                  = cpp_part_name
+        self.cpp_part_params                = cpp_part_params
+        self.cpp_intensity                  = cpp_intensity
+        
+    ######################################################################
+    ###  Simulation algorithms:      I slice, II grid, III cpp         ###
+    ######################################################################
+    
+    
+       ########################### I Slice ###########################
+
+    
+    def compute_slice_areas_finite_decorrelation_time(self):
+        &#34;&#34;&#34;Computes the \(I \\times k\) matrix 
+        
+        
+        corresponding to the areas of the slices 
+        
+                
+        \[\\begin{bmatrix}
+        L(S_{11})  &amp; \\ldots &amp; L(S_{1,k-1}) &amp; L(S_{1k}) \\\\
+        L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; L(S_{2k}) \\\\
+         \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+        L(S_{I1}) &amp;  \\ldots &amp;  L(S_{I,k-1}) &amp; L(S_{I,k})
+        \\end{bmatrix}
+        \]&#34;&#34;&#34;
+        self.I = math.ceil(-self.decorrelation_time/self.tau)
+        
+        s_i1 = [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+                for i in range(1,self.I+1)]
+        s_i2 = np.append(np.diff(s_i1[::-1])[::-1],s_i1[-1])
+        
+        right_column = np.tile(s_i2[:,np.newaxis],(1,self.nr_trawls-1))
+        left_column  = left_column  = (np.array(s_i1))[:,np.newaxis]
+        self.slice_areas_matrix  = np.concatenate([left_column,right_column],axis=1)
+        
+        #to add I-1 columns of length I zeros
+        #check entire program here and comapre with previous versions
+                
+    
+    def compute_slice_areas_infinite_decorrelation_time(self):
+        &#34;&#34;&#34;Computes the  \(k \\times k\) matrix  
+        
+        \[\\begin{bmatrix}
+              a_0     &amp;  a_0 - a_1  &amp; a_0 - a_1  &amp;    \\ldots  &amp; a_0 - a_1  &amp; a_0 - a_1  &amp; a_0 \\\\
+              a_1     &amp;  a_1 - a_2  &amp; a_1 - a_2  &amp;    \\ldots  &amp; a_1 - a_2  &amp; a_1        &amp; 0   \\\\
+              a_2     &amp;  a_2 - a_3  &amp; a_2 - a_3  &amp;    \\ldots  &amp; a_2        &amp; 0          &amp; 0   \\\\
+                      &amp;             &amp;            &amp;    \\vdots  &amp;            &amp;            &amp;     \\\\
+              a_{k-2} &amp; a_{k-1}     &amp; 0          &amp;    \\ldots  &amp;  0         &amp; 0          &amp; 0   \\\\
+              a_{k-1} &amp; 0           &amp; 0          &amp;             &amp;  0         &amp; 0          &amp; 0
+        \\end{bmatrix}\]
+            
+        corresponding to the areas of the slices 
+        
+                
+        \[\\begin{bmatrix}
+        L(S_{11})  &amp; \\ldots &amp; L(S_{1k,-1}) &amp; L(S_{1k}) \\\\
+        L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; 0 \\\\
+         \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+        L(S_{k1}) &amp;  \\ldots &amp;  0 &amp; 0
+        \\end{bmatrix}
+        \]
+         
+        
+        where \(k =\) `self.nr_trawls` and 
+        
+        \[\\begin{align}
+        a_0 &amp;= \int_{-\\tau}^0 \phi(u)du, \\\\
+            \\vdots &amp; \\\\
+        a_{k-2} &amp;= \int_{(-k+1)\\tau} ^{(-k+2)  \\tau} \phi(u) du, \\\\
+        a_{k-1} &amp;= \int_{-\infty}^{(-k+1)\\tau} \phi(u)du.
+        \\end{align} 
+        \]
+        &#34;&#34;&#34;
+        s_i1 =  [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+                 for i in range(1,self.nr_trawls)] + [quad(self.trawl_function,a=-np.inf,
+                                                           b=(-self.nr_trawls+1)*self.tau)[0]]
+        
+                                                           
+        #  a[0] -a[1] ,a[1] -a[2], ... , a[k-2] - a[k-1] , 0
+        differences   = np.append(np.diff(s_i1[::-1])[::-1],0) 
+
+        left_column  = np.array(s_i1)[:,np.newaxis]  
+        right_column = np.zeros((self.nr_trawls,1))
+        #we reconstruct the elements on the secondary diagonal at the end
+        
+                                                     
+        middle_matrix = np.tile(differences[:,np.newaxis],(1,self.nr_trawls-2))
+        whole_matrix  = np.concatenate([left_column,middle_matrix,right_column],axis=1)
+        whole_matrix_reversed   = np.triu(np.fliplr(whole_matrix), k=0)
+        np.fill_diagonal(whole_matrix_reversed,s_i1)     
+
+        self.slice_areas_matrix = np.fliplr(whole_matrix_reversed)
+    
+    def simulate_slice_finite_decorrelation_time(self,slice_convolution_type):
+        &#34;&#34;&#34;helper for the `simulate_slice` method&#34;&#34;&#34;
+        
+        filter_ = np.fliplr(np.tril(np.ones(self.I),k=0)) 
+        zero_matrix  = np.zeros([self.I,self.I-1])
+
+        for simulation_nr in range(self.nr_simulations):
+            gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+            jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+            
+            if slice_convolution_type == &#39;fft&#39;:
+        
+                gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+                jump_slices = np.concatenate([zero_matrix,jump_slices],axis=1)
+        
+                #matrix with 1&#39;s on and below the secondary diagonal
+                #flip the filter to agree with np convention
+                self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+        
+            elif slice_convolution_type == &#39;diagonals&#39;:
+                raise ValueError(&#39;not yet implemented&#39;)
+    
+    def simulate_slice_infinite_decorrelation_time(self,slice_convolution_type):
+        &#34;&#34;&#34;Helper for the `simulate_slice` method.&#34;&#34;&#34;
+
+        zero_matrix     = np.zeros([self.nr_trawls,self.nr_trawls-1])
+        filter_         = np.fliplr(np.tril(np.ones(self.nr_trawls),k=0)) 
+
+
+        for simulation_nr in range(self.nr_simulations):
+            
+            gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+            jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+            
+            if slice_convolution_type == &#39;fft&#39;:
+                gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+                jump_slices     = np.concatenate([zero_matrix,jump_slices],axis=1)
+                
+                self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                
+            elif slice_convolution_type == &#39;diagonals&#39;:
+                raise ValueError(&#39;not yet implemented&#39;)
+
+        
+        raise ValueError(&#39;not yet implemented&#39;)    
+        
+    def simulate_slice(self,slice_convolution_type):
+        &#34;&#34;&#34;implements algorithm [] from []. `slice_convolution_type` can be either [to add]&#34;&#34;&#34;
+        if self.decorrelation_time == -np.inf:
+            self.compute_slice_areas_infinite_decorrelation_time()
+            self.simulate_slice_infinite_decorrelation_time(slice_convolution_type)
+             
+        elif self.decorrelation_time &gt; -np.inf:
+            assert(self.trawl_function(self.decorrelation_time)) == 0,&#39;please check decorrelation time&#39; 
+            self.compute_slice_areas_finite_decorrelation_time()
+            self.simulate_slice_finite_decorrelation_time(slice_convolution_type)
+        self.values = self.gaussian_values + self.jump_values
+
+                      
+       ############################ II Grid ############################
+    
+    def grid_creation(self,min_t,max_t):
+        &#34;&#34;&#34;Creates a grid on \([0,\phi(0)] \\times [\\text{min_t}, \\text{max_t}]\). Each cell is represented by 
+        the coordinates of its bottom left corner. To each cell we associate a sample from each of the gaussian
+        and jump parts of the trawl process.
+        
+        Returns:
+          gaussian_values:  array with the Gaussian of the Levy basis evaluated over the cells  
+          jump_values: array with the jump part of the Levy basis evaluated over the cells      
+        &#34;&#34;&#34;
+            
+        coords = np.mgrid[0:self.trawl_function(0):self.mesh_size,min_t:max_t:self.mesh_size]
+        x, t   = coords[0].flatten(), coords[1].flatten() 
+        
+        areas            = self.vol * np.ones([self.nr_simulations,len(t)])
+        gaussian_values  = gaussian_part_sampler(self.gaussian_part_params,areas)
+        jump_values      = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)
+        
+            
+        return x,t,gaussian_values,jump_values
+    
+    def grid_update(self,i,t,gaussian_values,jump_values):
+        &#34;&#34;&#34;Inputs the values of the Levy basis evaluated over the grid cells on \([\\tau_{i-1}+\\text{truncation_grid},\\tau_{i-1}] \\times [0,\\phi(0)]\),
+        removes the values corresponding to cells with time coordinates less than \(\\tau_{i} + \\text{truncation_grid}\) and adds new samples
+        for the levy basis evaluated over the grid cells with time coordinates in \([\\tau_{i-1},\\tau_i]\) (see figure). 
+        Assumes that the consecutive ambit sets at times \(\\tau_{i-1},\\tau_i\) are not disjoint, i.e.
+        \(\\tau_i + \\text{truncation_grid} &lt; \\tau_{i-1}\).
+        
+        Args:
+          i: index of the trawl to be simulated
+          t: time coordinates of the cells of the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          gaussian_values: gaussian values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          jump_values: jump values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \times [0,\phi(0)\)
+        
+        Returns:
+          gaussian_values: gaussian values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          jump_values: jump values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)                                                                                                                                                                                                
+        &#34;&#34;&#34;
+          
+
+        ind_to_keep       =  t &gt;= (self.times_grid[i] + self.truncation_grid)
+        t[~ind_to_keep]  += -self.truncation_grid
+        
+        areas             = self.vol * np.ones([self.nr_simulations,sum(~ind_to_keep)])
+        #print(gaussian_values[:,~ind_to_keep].shape)
+        #print(self.gaussian_part_sampler(areas).shape)
+        gaussian_values[:,~ind_to_keep] = gaussian_part_sampler(self.gaussian_part_params,areas)
+        jump_values[:,~ind_to_keep]     = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)  
+        #print(&#39;ind to keep sum is &#39;, ind_to_keep.sum())
+        #print(&#39;gaussian is &#39;,gaussian_values.shape)
+        #print(&#39;non_gaussian_values &#39;,non_gaussian_values[:,ind_to_keep].shape)
+        #print(&#39;new_gaussian_values &#39;,new_gaussian_values.shape)
+        #print(&#39;t new shape is &#39;,t.shape)
+        #print(&#39;x shape is&#39;, x.shape)
+        
+        return t,gaussian_values,jump_values   
+    
+    
+    def simulate_grid(self):
+        &#34;&#34;&#34;Simulate the trawl proces at times `self.times_grid`, which don&#39;t have to be
+        equally distant, via the grid method.&#34;&#34;&#34;
+        for i in range(len(self.times_grid)):
+             if (i==0) or (self.times_grid[i-1] &lt;= self.times_grid[i] + self.truncation_grid):
+                 #check that we are creating the grid for the first time or that 
+                 #trawls at time i-1 and i have empty intersection
+                 x,t,gaussian_values, jump_values = self.grid_creation(self.times_grid[i] + self.truncation_grid, self.times_grid[i])
+
+                
+             elif self.times_grid[i-1] &gt; self.times_grid[i] + self.truncation_grid:
+                 #check that we have non empty intersection and update the grid
+                 t,gaussian_values,jump_values = self.grid_update(i,x,t,gaussian_values,jump_values)
+            
+             indicators = x &lt; self.trawl_function(t-self.times_grid[i])
+             #print(gaussian_values.shape,indicators.shape)
+             self.gaussian_values[:,i]  = gaussian_values @ indicators
+             self.jump_values[:,i]      = jump_values @ indicators
+             
+        self.values = self.gaussian_values + self.jump_values
+       ########################### III cpp ###########################
+       
+    def simulate_cpp():
+        &#34;&#34;&#34; text to be added&#34;&#34;&#34;
+        pass
+
+       ####################### simulate meta-method #######################
+    def simulate(self,method,slice_convolution_type=&#39;diagonals&#39;):
+         &#34;&#34;&#34;Function to simulate from the trawl function. Contains sanity checks
+         for the simulation parameters and uses helper functions for each simulation
+         method.
+         
+         Args:
+           method: one of the strings cpp, grid or slice
+           slice_convolution_type: if method is set to slice, this can be one of 
+           the strings diagonals or ftt, depending on the way we add up the simulated
+           slice. This argument is ignored if method is set to grid or cpp.&#34;&#34;&#34;
+        
+         check_trawl_function(self.trawl_function)
+         check_gaussian_params(self.gaussian_part_params)
+         
+         assert method in {&#39;cpp&#39;,&#39;grid&#39;,&#39;slice&#39;},&#39;simulation method not supported&#39;
+         
+         if method == &#39;grid&#39;:
+             check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+             check_grid_params(self.mesh_size,self.truncation_grid,self.times_grid)
+             self.vol = self.mesh_size **2
+             self.simulate_grid()
+             
+         elif method == &#39;cpp&#39;:
+             self.simulate_cpp()
+                 
+         elif method == &#39;slice&#39;:
+             assert slice_convolution_type in {&#39;fft&#39;,&#39;diagonals&#39;}
+             check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+
+             self.simulate_slice(slice_convolution_type)         
+             
+    def theoretical_acf(self,t_values):
+        &#34;&#34;&#34;Computes the theoretical acf of the trawl process
+        
+        Args:
+          t_values: array of time values 
+        
+        Returns:
+          d_acf: a dictionary of the type  \(t: \\text{corr}(X_0,X_t)\), where \(t\) ranges over the input array `t_values`. 
+        &#34;&#34;&#34;
+        total_area = quad(self.trawl_function,a=-np.inf,b= 0)[0]
+        d_acf=dict()
+        for t in t_values:
+            d_acf[t] = quad(self.trawl_function,a=-np.inf,b= -t)[0]/total_area
+        return d_acf
+                  
+
+             </code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="ambit_stochastics.trawl.trawl"><code class="flex name class">
+<span>class <span class="ident">trawl</span></span>
+<span>(</span><span>nr_trawls, nr_simulations, trawl_function=None, tau=None, decorrelation_time=-inf, mesh_size=None, times_grid=None, truncation_grid=None, truncation_cpp=None, gaussian_part_params=None, jump_part_name=None, jump_part_params=None, cpp_part_name=None, cpp_part_params=None, cpp_intensity=None, values=None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A container class for the simulation, parameter inference and forecasting of trawl processes.</p>
+<p>The implemented simulation algorithms are the grid, slice and cpp algorithms, as described in [paper link].</p>
+<p>The arguments required for the <code>simulate</code> method are <code>nr_trawls</code>,<code>nr_simulations</code>,
+<code>trawl_function</code> and <code>gaussian_part_params</code>. Further, the slice method requires <code>tau</code>,
+<code>decorrelation_time</code>,<code>jump_part_name</code>,<code>jump_part_params</code>, the grid method requires
+<code>mesh_size</code>,<code>times_grid</code>,<code>truncation_grid</code>,<code>jump_part_name</code>,<code>jump_part_params</code> and
+the cpp method requires <code>truncation_cpp,</code>,<code>cpp_part_name</code>,
+<code>cpp_part_params</code>, <code>cpp_intensity</code>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>nr_simulation</code></strong></dt>
+<dd>positive integer: number of simulations.</dd>
+<dt><strong><code>nr_trawls</code></strong></dt>
+<dd>positive integer: number of trawls on the time axis.</dd>
+<dt><strong><code>trawl_function</code></strong></dt>
+<dd>a non-negative, continuous, strictly increasing function <span><span class="MathJax_Preview">\phi \colon (-\infty,0] \to [0,\infty)</span><script type="math/tex">\phi \colon (-\infty,0] \to [0,\infty)</script></span></dd>
+<dt>with <span><span class="MathJax_Preview">\phi(1) =0, \phi(t) =0</span><script type="math/tex">\phi(1) =0, \phi(t) =0</script></span> for <span><span class="MathJax_Preview">t&gt;0</span><script type="math/tex">t>0</script></span>.</dt>
+<dt><strong><code>gaussian_part_params</code></strong></dt>
+<dd>tuple with the mean and standard deviation of the Gaussian Part.</dd>
+<dt><strong><code>tau</code></strong></dt>
+<dd>positive number: spacing between ambit sets on the time axis, used in the slice simulation method.</dd>
+<dt><strong><code>decorrelation_time</code></strong></dt>
+<dd><span><span class="MathJax_Preview">-\infty</span><script type="math/tex">-\infty</script></span> if the ambit set A is unbounded and finite, negative otherwise, used in the slice simulation method.</dd>
+<dt><strong><code>jump_part_name</code></strong></dt>
+<dd>a</dd>
+<dt><strong><code>jump_part_params</code></strong></dt>
+<dd>b</dd>
+<dt><strong><code>truncation_grid</code></strong></dt>
+<dd>c</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class trawl:
+    def __init__(self,nr_trawls, nr_simulations, trawl_function=None, tau = None, 
+                decorrelation_time = -np.inf, mesh_size = None, times_grid = None, 
+                truncation_grid = None, truncation_cpp = None, gaussian_part_params=None, 
+                jump_part_name=None,jump_part_params=None,cpp_part_name = None, 
+                cpp_part_params = None, cpp_intensity = None, values=None):
+        &#34;&#34;&#34;A container class for the simulation, parameter inference and forecasting of trawl processes.
+        
+        The implemented simulation algorithms are the grid, slice and cpp algorithms, as described in [paper link].
+        
+        The arguments required for the `simulate` method are `nr_trawls`,`nr_simulations`,
+        `trawl_function` and `gaussian_part_params`. Further, the slice method requires `tau`,
+        `decorrelation_time`,`jump_part_name`,`jump_part_params`, the grid method requires
+        `mesh_size`,`times_grid`,`truncation_grid`,`jump_part_name`,`jump_part_params` and
+        the cpp method requires `truncation_cpp,`,`cpp_part_name`, 
+        `cpp_part_params`, `cpp_intensity`.
+               
+        Args:
+          nr_simulation: positive integer: number of simulations.
+          nr_trawls: positive integer: number of trawls on the time axis.
+          trawl_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\)
+          with \(\phi(1) =0, \phi(t) =0\) for \(t&gt;0\).
+          gaussian_part_params: tuple with the mean and standard deviation of the Gaussian Part.
+          tau: positive number: spacing between ambit sets on the time axis, used in the slice simulation method.
+          decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise, used in the slice simulation method.
+          jump_part_name: a
+          jump_part_params: b
+          truncation_grid: c
+         &#34;&#34;&#34;
+       
+        #general attributes
+        check1(nr_trawls, nr_simulations)
+        self.nr_trawls                      = nr_trawls
+        self.nr_simulations                 = nr_simulations
+        
+        #attributes required for simulation
+        self.trawl_function                 = trawl_function
+        self.gaussian_part_params           = gaussian_part_params
+
+        
+        #############################################################################     
+        ### attributes required only for the slice partition simulation algorithm ###  
+        
+        self.tau                            = tau
+        self.decorrelation_time             = decorrelation_time
+        self.I                              = None
+        self.slice_areas_matrix             = None
+        # distributional parameters of the gaussian and jump parts of the levy seed 
+        # jump_part_name and jump_part_params are also requried for the grid method
+        self.jump_part_name                 = jump_part_name
+        self.jump_part_params               = jump_part_params
+        
+        ################################################################## 
+        ### attributes required only for the grid simulation algorithm ###
+        
+        self.times_grid               = times_grid
+        self.truncation_grid          = truncation_grid       
+        self.mesh_size                = mesh_size
+        self.times_grid               = times_grid
+        self.vol                      = None
+        
+        #self.indicator_matrix               = None
+        
+        ################################################################## 
+        ### attributes required only for the cpp simulation algorithm  ###
+        
+        self.cpp_part_name   = cpp_part_name 
+        self.cpp_part_params = cpp_part_params
+        self.cpp_intensity   = cpp_intensity
+            
+        ### arrays containing the gaussian, jump and cpp parts of the simulation
+        self.gaussian_values          =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        self.jump_values              =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        self.cpp_values               =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        
+        ### passed by the user or simulated using one of the simulation methods ### 
+        self.values                   =   values 
+        
+        
+        ##################################################################
+        ### attributes required only for the cpp simulation algorithm  ###
+        
+        self.cpp_part_name                  = cpp_part_name
+        self.cpp_part_params                = cpp_part_params
+        self.cpp_intensity                  = cpp_intensity
+        
+    ######################################################################
+    ###  Simulation algorithms:      I slice, II grid, III cpp         ###
+    ######################################################################
+    
+    
+       ########################### I Slice ###########################
+
+    
+    def compute_slice_areas_finite_decorrelation_time(self):
+        &#34;&#34;&#34;Computes the \(I \\times k\) matrix 
+        
+        
+        corresponding to the areas of the slices 
+        
+                
+        \[\\begin{bmatrix}
+        L(S_{11})  &amp; \\ldots &amp; L(S_{1,k-1}) &amp; L(S_{1k}) \\\\
+        L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; L(S_{2k}) \\\\
+         \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+        L(S_{I1}) &amp;  \\ldots &amp;  L(S_{I,k-1}) &amp; L(S_{I,k})
+        \\end{bmatrix}
+        \]&#34;&#34;&#34;
+        self.I = math.ceil(-self.decorrelation_time/self.tau)
+        
+        s_i1 = [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+                for i in range(1,self.I+1)]
+        s_i2 = np.append(np.diff(s_i1[::-1])[::-1],s_i1[-1])
+        
+        right_column = np.tile(s_i2[:,np.newaxis],(1,self.nr_trawls-1))
+        left_column  = left_column  = (np.array(s_i1))[:,np.newaxis]
+        self.slice_areas_matrix  = np.concatenate([left_column,right_column],axis=1)
+        
+        #to add I-1 columns of length I zeros
+        #check entire program here and comapre with previous versions
+                
+    
+    def compute_slice_areas_infinite_decorrelation_time(self):
+        &#34;&#34;&#34;Computes the  \(k \\times k\) matrix  
+        
+        \[\\begin{bmatrix}
+              a_0     &amp;  a_0 - a_1  &amp; a_0 - a_1  &amp;    \\ldots  &amp; a_0 - a_1  &amp; a_0 - a_1  &amp; a_0 \\\\
+              a_1     &amp;  a_1 - a_2  &amp; a_1 - a_2  &amp;    \\ldots  &amp; a_1 - a_2  &amp; a_1        &amp; 0   \\\\
+              a_2     &amp;  a_2 - a_3  &amp; a_2 - a_3  &amp;    \\ldots  &amp; a_2        &amp; 0          &amp; 0   \\\\
+                      &amp;             &amp;            &amp;    \\vdots  &amp;            &amp;            &amp;     \\\\
+              a_{k-2} &amp; a_{k-1}     &amp; 0          &amp;    \\ldots  &amp;  0         &amp; 0          &amp; 0   \\\\
+              a_{k-1} &amp; 0           &amp; 0          &amp;             &amp;  0         &amp; 0          &amp; 0
+        \\end{bmatrix}\]
+            
+        corresponding to the areas of the slices 
+        
+                
+        \[\\begin{bmatrix}
+        L(S_{11})  &amp; \\ldots &amp; L(S_{1k,-1}) &amp; L(S_{1k}) \\\\
+        L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; 0 \\\\
+         \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+        L(S_{k1}) &amp;  \\ldots &amp;  0 &amp; 0
+        \\end{bmatrix}
+        \]
+         
+        
+        where \(k =\) `self.nr_trawls` and 
+        
+        \[\\begin{align}
+        a_0 &amp;= \int_{-\\tau}^0 \phi(u)du, \\\\
+            \\vdots &amp; \\\\
+        a_{k-2} &amp;= \int_{(-k+1)\\tau} ^{(-k+2)  \\tau} \phi(u) du, \\\\
+        a_{k-1} &amp;= \int_{-\infty}^{(-k+1)\\tau} \phi(u)du.
+        \\end{align} 
+        \]
+        &#34;&#34;&#34;
+        s_i1 =  [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+                 for i in range(1,self.nr_trawls)] + [quad(self.trawl_function,a=-np.inf,
+                                                           b=(-self.nr_trawls+1)*self.tau)[0]]
+        
+                                                           
+        #  a[0] -a[1] ,a[1] -a[2], ... , a[k-2] - a[k-1] , 0
+        differences   = np.append(np.diff(s_i1[::-1])[::-1],0) 
+
+        left_column  = np.array(s_i1)[:,np.newaxis]  
+        right_column = np.zeros((self.nr_trawls,1))
+        #we reconstruct the elements on the secondary diagonal at the end
+        
+                                                     
+        middle_matrix = np.tile(differences[:,np.newaxis],(1,self.nr_trawls-2))
+        whole_matrix  = np.concatenate([left_column,middle_matrix,right_column],axis=1)
+        whole_matrix_reversed   = np.triu(np.fliplr(whole_matrix), k=0)
+        np.fill_diagonal(whole_matrix_reversed,s_i1)     
+
+        self.slice_areas_matrix = np.fliplr(whole_matrix_reversed)
+    
+    def simulate_slice_finite_decorrelation_time(self,slice_convolution_type):
+        &#34;&#34;&#34;helper for the `simulate_slice` method&#34;&#34;&#34;
+        
+        filter_ = np.fliplr(np.tril(np.ones(self.I),k=0)) 
+        zero_matrix  = np.zeros([self.I,self.I-1])
+
+        for simulation_nr in range(self.nr_simulations):
+            gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+            jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+            
+            if slice_convolution_type == &#39;fft&#39;:
+        
+                gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+                jump_slices = np.concatenate([zero_matrix,jump_slices],axis=1)
+        
+                #matrix with 1&#39;s on and below the secondary diagonal
+                #flip the filter to agree with np convention
+                self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+        
+            elif slice_convolution_type == &#39;diagonals&#39;:
+                raise ValueError(&#39;not yet implemented&#39;)
+    
+    def simulate_slice_infinite_decorrelation_time(self,slice_convolution_type):
+        &#34;&#34;&#34;Helper for the `simulate_slice` method.&#34;&#34;&#34;
+
+        zero_matrix     = np.zeros([self.nr_trawls,self.nr_trawls-1])
+        filter_         = np.fliplr(np.tril(np.ones(self.nr_trawls),k=0)) 
+
+
+        for simulation_nr in range(self.nr_simulations):
+            
+            gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+            jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+            
+            if slice_convolution_type == &#39;fft&#39;:
+                gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+                jump_slices     = np.concatenate([zero_matrix,jump_slices],axis=1)
+                
+                self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+                
+            elif slice_convolution_type == &#39;diagonals&#39;:
+                raise ValueError(&#39;not yet implemented&#39;)
+
+        
+        raise ValueError(&#39;not yet implemented&#39;)    
+        
+    def simulate_slice(self,slice_convolution_type):
+        &#34;&#34;&#34;implements algorithm [] from []. `slice_convolution_type` can be either [to add]&#34;&#34;&#34;
+        if self.decorrelation_time == -np.inf:
+            self.compute_slice_areas_infinite_decorrelation_time()
+            self.simulate_slice_infinite_decorrelation_time(slice_convolution_type)
+             
+        elif self.decorrelation_time &gt; -np.inf:
+            assert(self.trawl_function(self.decorrelation_time)) == 0,&#39;please check decorrelation time&#39; 
+            self.compute_slice_areas_finite_decorrelation_time()
+            self.simulate_slice_finite_decorrelation_time(slice_convolution_type)
+        self.values = self.gaussian_values + self.jump_values
+
+                      
+       ############################ II Grid ############################
+    
+    def grid_creation(self,min_t,max_t):
+        &#34;&#34;&#34;Creates a grid on \([0,\phi(0)] \\times [\\text{min_t}, \\text{max_t}]\). Each cell is represented by 
+        the coordinates of its bottom left corner. To each cell we associate a sample from each of the gaussian
+        and jump parts of the trawl process.
+        
+        Returns:
+          gaussian_values:  array with the Gaussian of the Levy basis evaluated over the cells  
+          jump_values: array with the jump part of the Levy basis evaluated over the cells      
+        &#34;&#34;&#34;
+            
+        coords = np.mgrid[0:self.trawl_function(0):self.mesh_size,min_t:max_t:self.mesh_size]
+        x, t   = coords[0].flatten(), coords[1].flatten() 
+        
+        areas            = self.vol * np.ones([self.nr_simulations,len(t)])
+        gaussian_values  = gaussian_part_sampler(self.gaussian_part_params,areas)
+        jump_values      = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)
+        
+            
+        return x,t,gaussian_values,jump_values
+    
+    def grid_update(self,i,t,gaussian_values,jump_values):
+        &#34;&#34;&#34;Inputs the values of the Levy basis evaluated over the grid cells on \([\\tau_{i-1}+\\text{truncation_grid},\\tau_{i-1}] \\times [0,\\phi(0)]\),
+        removes the values corresponding to cells with time coordinates less than \(\\tau_{i} + \\text{truncation_grid}\) and adds new samples
+        for the levy basis evaluated over the grid cells with time coordinates in \([\\tau_{i-1},\\tau_i]\) (see figure). 
+        Assumes that the consecutive ambit sets at times \(\\tau_{i-1},\\tau_i\) are not disjoint, i.e.
+        \(\\tau_i + \\text{truncation_grid} &lt; \\tau_{i-1}\).
+        
+        Args:
+          i: index of the trawl to be simulated
+          t: time coordinates of the cells of the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          gaussian_values: gaussian values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          jump_values: jump values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \times [0,\phi(0)\)
+        
+        Returns:
+          gaussian_values: gaussian values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+          jump_values: jump values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)                                                                                                                                                                                                
+        &#34;&#34;&#34;
+          
+
+        ind_to_keep       =  t &gt;= (self.times_grid[i] + self.truncation_grid)
+        t[~ind_to_keep]  += -self.truncation_grid
+        
+        areas             = self.vol * np.ones([self.nr_simulations,sum(~ind_to_keep)])
+        #print(gaussian_values[:,~ind_to_keep].shape)
+        #print(self.gaussian_part_sampler(areas).shape)
+        gaussian_values[:,~ind_to_keep] = gaussian_part_sampler(self.gaussian_part_params,areas)
+        jump_values[:,~ind_to_keep]     = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)  
+        #print(&#39;ind to keep sum is &#39;, ind_to_keep.sum())
+        #print(&#39;gaussian is &#39;,gaussian_values.shape)
+        #print(&#39;non_gaussian_values &#39;,non_gaussian_values[:,ind_to_keep].shape)
+        #print(&#39;new_gaussian_values &#39;,new_gaussian_values.shape)
+        #print(&#39;t new shape is &#39;,t.shape)
+        #print(&#39;x shape is&#39;, x.shape)
+        
+        return t,gaussian_values,jump_values   
+    
+    
+    def simulate_grid(self):
+        &#34;&#34;&#34;Simulate the trawl proces at times `self.times_grid`, which don&#39;t have to be
+        equally distant, via the grid method.&#34;&#34;&#34;
+        for i in range(len(self.times_grid)):
+             if (i==0) or (self.times_grid[i-1] &lt;= self.times_grid[i] + self.truncation_grid):
+                 #check that we are creating the grid for the first time or that 
+                 #trawls at time i-1 and i have empty intersection
+                 x,t,gaussian_values, jump_values = self.grid_creation(self.times_grid[i] + self.truncation_grid, self.times_grid[i])
+
+                
+             elif self.times_grid[i-1] &gt; self.times_grid[i] + self.truncation_grid:
+                 #check that we have non empty intersection and update the grid
+                 t,gaussian_values,jump_values = self.grid_update(i,x,t,gaussian_values,jump_values)
+            
+             indicators = x &lt; self.trawl_function(t-self.times_grid[i])
+             #print(gaussian_values.shape,indicators.shape)
+             self.gaussian_values[:,i]  = gaussian_values @ indicators
+             self.jump_values[:,i]      = jump_values @ indicators
+             
+        self.values = self.gaussian_values + self.jump_values
+       ########################### III cpp ###########################
+       
+    def simulate_cpp():
+        &#34;&#34;&#34; text to be added&#34;&#34;&#34;
+        pass
+
+       ####################### simulate meta-method #######################
+    def simulate(self,method,slice_convolution_type=&#39;diagonals&#39;):
+         &#34;&#34;&#34;Function to simulate from the trawl function. Contains sanity checks
+         for the simulation parameters and uses helper functions for each simulation
+         method.
+         
+         Args:
+           method: one of the strings cpp, grid or slice
+           slice_convolution_type: if method is set to slice, this can be one of 
+           the strings diagonals or ftt, depending on the way we add up the simulated
+           slice. This argument is ignored if method is set to grid or cpp.&#34;&#34;&#34;
+        
+         check_trawl_function(self.trawl_function)
+         check_gaussian_params(self.gaussian_part_params)
+         
+         assert method in {&#39;cpp&#39;,&#39;grid&#39;,&#39;slice&#39;},&#39;simulation method not supported&#39;
+         
+         if method == &#39;grid&#39;:
+             check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+             check_grid_params(self.mesh_size,self.truncation_grid,self.times_grid)
+             self.vol = self.mesh_size **2
+             self.simulate_grid()
+             
+         elif method == &#39;cpp&#39;:
+             self.simulate_cpp()
+                 
+         elif method == &#39;slice&#39;:
+             assert slice_convolution_type in {&#39;fft&#39;,&#39;diagonals&#39;}
+             check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+
+             self.simulate_slice(slice_convolution_type)         
+             
+    def theoretical_acf(self,t_values):
+        &#34;&#34;&#34;Computes the theoretical acf of the trawl process
+        
+        Args:
+          t_values: array of time values 
+        
+        Returns:
+          d_acf: a dictionary of the type  \(t: \\text{corr}(X_0,X_t)\), where \(t\) ranges over the input array `t_values`. 
+        &#34;&#34;&#34;
+        total_area = quad(self.trawl_function,a=-np.inf,b= 0)[0]
+        d_acf=dict()
+        for t in t_values:
+            d_acf[t] = quad(self.trawl_function,a=-np.inf,b= -t)[0]/total_area
+        return d_acf</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="ambit_stochastics.trawl.trawl.compute_slice_areas_finite_decorrelation_time"><code class="name flex">
+<span>def <span class="ident">compute_slice_areas_finite_decorrelation_time</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the <span><span class="MathJax_Preview">I \times k</span><script type="math/tex">I \times k</script></span> matrix </p>
+<p>corresponding to the areas of the slices </p>
+<p><span><span class="MathJax_Preview">\begin{bmatrix}
+L(S_{11})
+&amp; \ldots &amp; L(S_{1,k-1}) &amp; L(S_{1k}) \\
+L(S_{21})
+&amp;
+\ldots &amp;
+L(S_{2,k-1}) &amp; L(S_{2k}) \\
+\vdots &amp;
+&amp;
+\vdots
+&amp; \vdots
+\\
+L(S_{I1}) &amp;
+\ldots &amp;
+L(S_{I,k-1}) &amp; L(S_{I,k})
+\end{bmatrix}
+</span><script type="math/tex; mode=display">\begin{bmatrix}
+L(S_{11})
+& \ldots & L(S_{1,k-1}) & L(S_{1k}) \\
+L(S_{21})
+&
+\ldots &
+L(S_{2,k-1}) & L(S_{2k}) \\
+\vdots &
+&
+\vdots
+& \vdots
+\\
+L(S_{I1}) &
+\ldots &
+L(S_{I,k-1}) & L(S_{I,k})
+\end{bmatrix}
+</script></span></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_slice_areas_finite_decorrelation_time(self):
+    &#34;&#34;&#34;Computes the \(I \\times k\) matrix 
+    
+    
+    corresponding to the areas of the slices 
+    
+            
+    \[\\begin{bmatrix}
+    L(S_{11})  &amp; \\ldots &amp; L(S_{1,k-1}) &amp; L(S_{1k}) \\\\
+    L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; L(S_{2k}) \\\\
+     \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+    L(S_{I1}) &amp;  \\ldots &amp;  L(S_{I,k-1}) &amp; L(S_{I,k})
+    \\end{bmatrix}
+    \]&#34;&#34;&#34;
+    self.I = math.ceil(-self.decorrelation_time/self.tau)
+    
+    s_i1 = [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+            for i in range(1,self.I+1)]
+    s_i2 = np.append(np.diff(s_i1[::-1])[::-1],s_i1[-1])
+    
+    right_column = np.tile(s_i2[:,np.newaxis],(1,self.nr_trawls-1))
+    left_column  = left_column  = (np.array(s_i1))[:,np.newaxis]
+    self.slice_areas_matrix  = np.concatenate([left_column,right_column],axis=1)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.compute_slice_areas_infinite_decorrelation_time"><code class="name flex">
+<span>def <span class="ident">compute_slice_areas_infinite_decorrelation_time</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the
+<span><span class="MathJax_Preview">k \times k</span><script type="math/tex">k \times k</script></span> matrix
+</p>
+<p><span><span class="MathJax_Preview">\begin{bmatrix}
+a_0
+&amp;
+a_0 - a_1
+&amp; a_0 - a_1
+&amp;
+\ldots
+&amp; a_0 - a_1
+&amp; a_0 - a_1
+&amp; a_0 \\
+a_1
+&amp;
+a_1 - a_2
+&amp; a_1 - a_2
+&amp;
+\ldots
+&amp; a_1 - a_2
+&amp; a_1
+&amp; 0
+\\
+a_2
+&amp;
+a_2 - a_3
+&amp; a_2 - a_3
+&amp;
+\ldots
+&amp; a_2
+&amp; 0
+&amp; 0
+\\
+&amp;
+&amp;
+&amp;
+\vdots
+&amp;
+&amp;
+&amp;
+\\
+a_{k-2} &amp; a_{k-1}
+&amp; 0
+&amp;
+\ldots
+&amp;
+0
+&amp; 0
+&amp; 0
+\\
+a_{k-1} &amp; 0
+&amp; 0
+&amp;
+&amp;
+0
+&amp; 0
+&amp; 0
+\end{bmatrix}</span><script type="math/tex; mode=display">\begin{bmatrix}
+a_0
+&
+a_0 - a_1
+& a_0 - a_1
+&
+\ldots
+& a_0 - a_1
+& a_0 - a_1
+& a_0 \\
+a_1
+&
+a_1 - a_2
+& a_1 - a_2
+&
+\ldots
+& a_1 - a_2
+& a_1
+& 0
+\\
+a_2
+&
+a_2 - a_3
+& a_2 - a_3
+&
+\ldots
+& a_2
+& 0
+& 0
+\\
+&
+&
+&
+\vdots
+&
+&
+&
+\\
+a_{k-2} & a_{k-1}
+& 0
+&
+\ldots
+&
+0
+& 0
+& 0
+\\
+a_{k-1} & 0
+& 0
+&
+&
+0
+& 0
+& 0
+\end{bmatrix}</script></span></p>
+<p>corresponding to the areas of the slices </p>
+<p><span><span class="MathJax_Preview">\begin{bmatrix}
+L(S_{11})
+&amp; \ldots &amp; L(S_{1k,-1}) &amp; L(S_{1k}) \\
+L(S_{21})
+&amp;
+\ldots &amp;
+L(S_{2,k-1}) &amp; 0 \\
+\vdots &amp;
+&amp;
+\vdots
+&amp; \vdots
+\\
+L(S_{k1}) &amp;
+\ldots &amp;
+0 &amp; 0
+\end{bmatrix}
+</span><script type="math/tex; mode=display">\begin{bmatrix}
+L(S_{11})
+& \ldots & L(S_{1k,-1}) & L(S_{1k}) \\
+L(S_{21})
+&
+\ldots &
+L(S_{2,k-1}) & 0 \\
+\vdots &
+&
+\vdots
+& \vdots
+\\
+L(S_{k1}) &
+\ldots &
+0 & 0
+\end{bmatrix}
+</script></span></p>
+<p>where <span><span class="MathJax_Preview">k =</span><script type="math/tex">k =</script></span> <code>self.nr_trawls</code> and </p>
+<p><span><span class="MathJax_Preview">\begin{align}
+a_0 &amp;= \int_{-\tau}^0 \phi(u)du, \\
+\vdots &amp; \\
+a_{k-2} &amp;= \int_{(-k+1)\tau} ^{(-k+2)
+\tau} \phi(u) du, \\
+a_{k-1} &amp;= \int_{-\infty}^{(-k+1)\tau} \phi(u)du.
+\end{align}
+</span><script type="math/tex; mode=display">\begin{align}
+a_0 &= \int_{-\tau}^0 \phi(u)du, \\
+\vdots & \\
+a_{k-2} &= \int_{(-k+1)\tau} ^{(-k+2)
+\tau} \phi(u) du, \\
+a_{k-1} &= \int_{-\infty}^{(-k+1)\tau} \phi(u)du.
+\end{align}
+</script></span></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def compute_slice_areas_infinite_decorrelation_time(self):
+    &#34;&#34;&#34;Computes the  \(k \\times k\) matrix  
+    
+    \[\\begin{bmatrix}
+          a_0     &amp;  a_0 - a_1  &amp; a_0 - a_1  &amp;    \\ldots  &amp; a_0 - a_1  &amp; a_0 - a_1  &amp; a_0 \\\\
+          a_1     &amp;  a_1 - a_2  &amp; a_1 - a_2  &amp;    \\ldots  &amp; a_1 - a_2  &amp; a_1        &amp; 0   \\\\
+          a_2     &amp;  a_2 - a_3  &amp; a_2 - a_3  &amp;    \\ldots  &amp; a_2        &amp; 0          &amp; 0   \\\\
+                  &amp;             &amp;            &amp;    \\vdots  &amp;            &amp;            &amp;     \\\\
+          a_{k-2} &amp; a_{k-1}     &amp; 0          &amp;    \\ldots  &amp;  0         &amp; 0          &amp; 0   \\\\
+          a_{k-1} &amp; 0           &amp; 0          &amp;             &amp;  0         &amp; 0          &amp; 0
+    \\end{bmatrix}\]
+        
+    corresponding to the areas of the slices 
+    
+            
+    \[\\begin{bmatrix}
+    L(S_{11})  &amp; \\ldots &amp; L(S_{1k,-1}) &amp; L(S_{1k}) \\\\
+    L(S_{21})  &amp;  \\ldots &amp;  L(S_{2,k-1}) &amp; 0 \\\\
+     \\vdots &amp;       &amp;  \\vdots  &amp; \\vdots  \\\\
+    L(S_{k1}) &amp;  \\ldots &amp;  0 &amp; 0
+    \\end{bmatrix}
+    \]
+     
+    
+    where \(k =\) `self.nr_trawls` and 
+    
+    \[\\begin{align}
+    a_0 &amp;= \int_{-\\tau}^0 \phi(u)du, \\\\
+        \\vdots &amp; \\\\
+    a_{k-2} &amp;= \int_{(-k+1)\\tau} ^{(-k+2)  \\tau} \phi(u) du, \\\\
+    a_{k-1} &amp;= \int_{-\infty}^{(-k+1)\\tau} \phi(u)du.
+    \\end{align} 
+    \]
+    &#34;&#34;&#34;
+    s_i1 =  [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
+             for i in range(1,self.nr_trawls)] + [quad(self.trawl_function,a=-np.inf,
+                                                       b=(-self.nr_trawls+1)*self.tau)[0]]
+    
+                                                       
+    #  a[0] -a[1] ,a[1] -a[2], ... , a[k-2] - a[k-1] , 0
+    differences   = np.append(np.diff(s_i1[::-1])[::-1],0) 
+
+    left_column  = np.array(s_i1)[:,np.newaxis]  
+    right_column = np.zeros((self.nr_trawls,1))
+    #we reconstruct the elements on the secondary diagonal at the end
+    
+                                                 
+    middle_matrix = np.tile(differences[:,np.newaxis],(1,self.nr_trawls-2))
+    whole_matrix  = np.concatenate([left_column,middle_matrix,right_column],axis=1)
+    whole_matrix_reversed   = np.triu(np.fliplr(whole_matrix), k=0)
+    np.fill_diagonal(whole_matrix_reversed,s_i1)     
+
+    self.slice_areas_matrix = np.fliplr(whole_matrix_reversed)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.grid_creation"><code class="name flex">
+<span>def <span class="ident">grid_creation</span></span>(<span>self, min_t, max_t)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Creates a grid on <span><span class="MathJax_Preview">[0,\phi(0)] \times [\text{min_t}, \text{max_t}]</span><script type="math/tex">[0,\phi(0)] \times [\text{min_t}, \text{max_t}]</script></span>. Each cell is represented by
+the coordinates of its bottom left corner. To each cell we associate a sample from each of the gaussian
+and jump parts of the trawl process.</p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>gaussian_values</code></dt>
+<dd>array with the Gaussian of the Levy basis evaluated over the cells
+</dd>
+<dt><code>jump_values</code></dt>
+<dd>array with the jump part of the Levy basis evaluated over the cells</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def grid_creation(self,min_t,max_t):
+    &#34;&#34;&#34;Creates a grid on \([0,\phi(0)] \\times [\\text{min_t}, \\text{max_t}]\). Each cell is represented by 
+    the coordinates of its bottom left corner. To each cell we associate a sample from each of the gaussian
+    and jump parts of the trawl process.
+    
+    Returns:
+      gaussian_values:  array with the Gaussian of the Levy basis evaluated over the cells  
+      jump_values: array with the jump part of the Levy basis evaluated over the cells      
+    &#34;&#34;&#34;
+        
+    coords = np.mgrid[0:self.trawl_function(0):self.mesh_size,min_t:max_t:self.mesh_size]
+    x, t   = coords[0].flatten(), coords[1].flatten() 
+    
+    areas            = self.vol * np.ones([self.nr_simulations,len(t)])
+    gaussian_values  = gaussian_part_sampler(self.gaussian_part_params,areas)
+    jump_values      = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)
+    
+        
+    return x,t,gaussian_values,jump_values</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.grid_update"><code class="name flex">
+<span>def <span class="ident">grid_update</span></span>(<span>self, i, t, gaussian_values, jump_values)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Inputs the values of the Levy basis evaluated over the grid cells on <span><span class="MathJax_Preview">[\tau_{i-1}+\text{truncation_grid},\tau_{i-1}] \times [0,\phi(0)]</span><script type="math/tex">[\tau_{i-1}+\text{truncation_grid},\tau_{i-1}] \times [0,\phi(0)]</script></span>,
+removes the values corresponding to cells with time coordinates less than <span><span class="MathJax_Preview">\tau_{i} + \text{truncation_grid}</span><script type="math/tex">\tau_{i} + \text{truncation_grid}</script></span> and adds new samples
+for the levy basis evaluated over the grid cells with time coordinates in <span><span class="MathJax_Preview">[\tau_{i-1},\tau_i]</span><script type="math/tex">[\tau_{i-1},\tau_i]</script></span> (see figure).
+Assumes that the consecutive ambit sets at times <span><span class="MathJax_Preview">\tau_{i-1},\tau_i</span><script type="math/tex">\tau_{i-1},\tau_i</script></span> are not disjoint, i.e.
+<span><span class="MathJax_Preview">\tau_i + \text{truncation_grid} &lt; \tau_{i-1}</span><script type="math/tex">\tau_i + \text{truncation_grid} < \tau_{i-1}</script></span>.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>i</code></strong></dt>
+<dd>index of the trawl to be simulated</dd>
+<dt><strong><code>t</code></strong></dt>
+<dd>time coordinates of the cells of the grid on <span><span class="MathJax_Preview">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}] \times [0,\phi(0)]</span><script type="math/tex">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}] \times [0,\phi(0)]</script></span></dd>
+<dt><strong><code>gaussian_values</code></strong></dt>
+<dd>gaussian values for the grid on <span><span class="MathJax_Preview">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}] \times [0,\phi(0)]</span><script type="math/tex">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}] \times [0,\phi(0)]</script></span></dd>
+<dt><strong><code>jump_values</code></strong></dt>
+<dd>jump values for the grid on <span><span class="MathJax_Preview">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}]
+imes [0,\phi(0)</span><script type="math/tex">[\tau_{i-1},\tau_{i-1}+\text{truncation_grid}]
+imes [0,\phi(0)</script></span></dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>gaussian_values</code></dt>
+<dd>gaussian values for the grid cells on <span><span class="MathJax_Preview">[\tau_{i},\tau_{i}+\text{truncation_grid}] \times [0,\phi(0)]</span><script type="math/tex">[\tau_{i},\tau_{i}+\text{truncation_grid}] \times [0,\phi(0)]</script></span></dd>
+<dt><code>jump_values</code></dt>
+<dd>jump values for the grid cells on <span><span class="MathJax_Preview">[\tau_{i},\tau_{i}+\text{truncation_grid}] \times [0,\phi(0)]</span><script type="math/tex">[\tau_{i},\tau_{i}+\text{truncation_grid}] \times [0,\phi(0)]</script></span></dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def grid_update(self,i,t,gaussian_values,jump_values):
+    &#34;&#34;&#34;Inputs the values of the Levy basis evaluated over the grid cells on \([\\tau_{i-1}+\\text{truncation_grid},\\tau_{i-1}] \\times [0,\\phi(0)]\),
+    removes the values corresponding to cells with time coordinates less than \(\\tau_{i} + \\text{truncation_grid}\) and adds new samples
+    for the levy basis evaluated over the grid cells with time coordinates in \([\\tau_{i-1},\\tau_i]\) (see figure). 
+    Assumes that the consecutive ambit sets at times \(\\tau_{i-1},\\tau_i\) are not disjoint, i.e.
+    \(\\tau_i + \\text{truncation_grid} &lt; \\tau_{i-1}\).
+    
+    Args:
+      i: index of the trawl to be simulated
+      t: time coordinates of the cells of the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+      gaussian_values: gaussian values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+      jump_values: jump values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \times [0,\phi(0)\)
+    
+    Returns:
+      gaussian_values: gaussian values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
+      jump_values: jump values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)                                                                                                                                                                                                
+    &#34;&#34;&#34;
+      
+
+    ind_to_keep       =  t &gt;= (self.times_grid[i] + self.truncation_grid)
+    t[~ind_to_keep]  += -self.truncation_grid
+    
+    areas             = self.vol * np.ones([self.nr_simulations,sum(~ind_to_keep)])
+    #print(gaussian_values[:,~ind_to_keep].shape)
+    #print(self.gaussian_part_sampler(areas).shape)
+    gaussian_values[:,~ind_to_keep] = gaussian_part_sampler(self.gaussian_part_params,areas)
+    jump_values[:,~ind_to_keep]     = jump_part_sampler(self.jump_part_params,areas,self.jump_part_name)  
+    #print(&#39;ind to keep sum is &#39;, ind_to_keep.sum())
+    #print(&#39;gaussian is &#39;,gaussian_values.shape)
+    #print(&#39;non_gaussian_values &#39;,non_gaussian_values[:,ind_to_keep].shape)
+    #print(&#39;new_gaussian_values &#39;,new_gaussian_values.shape)
+    #print(&#39;t new shape is &#39;,t.shape)
+    #print(&#39;x shape is&#39;, x.shape)
+    
+    return t,gaussian_values,jump_values   </code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate"><code class="name flex">
+<span>def <span class="ident">simulate</span></span>(<span>self, method, slice_convolution_type='diagonals')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Function to simulate from the trawl function. Contains sanity checks
+for the simulation parameters and uses helper functions for each simulation
+method.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>method</code></strong></dt>
+<dd>one of the strings cpp, grid or slice</dd>
+<dt><strong><code>slice_convolution_type</code></strong></dt>
+<dd>if method is set to slice, this can be one of </dd>
+</dl>
+<p>the strings diagonals or ftt, depending on the way we add up the simulated
+slice. This argument is ignored if method is set to grid or cpp.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate(self,method,slice_convolution_type=&#39;diagonals&#39;):
+     &#34;&#34;&#34;Function to simulate from the trawl function. Contains sanity checks
+     for the simulation parameters and uses helper functions for each simulation
+     method.
+     
+     Args:
+       method: one of the strings cpp, grid or slice
+       slice_convolution_type: if method is set to slice, this can be one of 
+       the strings diagonals or ftt, depending on the way we add up the simulated
+       slice. This argument is ignored if method is set to grid or cpp.&#34;&#34;&#34;
+    
+     check_trawl_function(self.trawl_function)
+     check_gaussian_params(self.gaussian_part_params)
+     
+     assert method in {&#39;cpp&#39;,&#39;grid&#39;,&#39;slice&#39;},&#39;simulation method not supported&#39;
+     
+     if method == &#39;grid&#39;:
+         check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+         check_grid_params(self.mesh_size,self.truncation_grid,self.times_grid)
+         self.vol = self.mesh_size **2
+         self.simulate_grid()
+         
+     elif method == &#39;cpp&#39;:
+         self.simulate_cpp()
+             
+     elif method == &#39;slice&#39;:
+         assert slice_convolution_type in {&#39;fft&#39;,&#39;diagonals&#39;}
+         check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+
+         self.simulate_slice(slice_convolution_type)         </code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate_cpp"><code class="name flex">
+<span>def <span class="ident">simulate_cpp</span></span>(<span>)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>text to be added</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate_cpp():
+    &#34;&#34;&#34; text to be added&#34;&#34;&#34;
+    pass</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate_grid"><code class="name flex">
+<span>def <span class="ident">simulate_grid</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Simulate the trawl proces at times <code>self.times_grid</code>, which don't have to be
+equally distant, via the grid method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate_grid(self):
+    &#34;&#34;&#34;Simulate the trawl proces at times `self.times_grid`, which don&#39;t have to be
+    equally distant, via the grid method.&#34;&#34;&#34;
+    for i in range(len(self.times_grid)):
+         if (i==0) or (self.times_grid[i-1] &lt;= self.times_grid[i] + self.truncation_grid):
+             #check that we are creating the grid for the first time or that 
+             #trawls at time i-1 and i have empty intersection
+             x,t,gaussian_values, jump_values = self.grid_creation(self.times_grid[i] + self.truncation_grid, self.times_grid[i])
+
+            
+         elif self.times_grid[i-1] &gt; self.times_grid[i] + self.truncation_grid:
+             #check that we have non empty intersection and update the grid
+             t,gaussian_values,jump_values = self.grid_update(i,x,t,gaussian_values,jump_values)
+        
+         indicators = x &lt; self.trawl_function(t-self.times_grid[i])
+         #print(gaussian_values.shape,indicators.shape)
+         self.gaussian_values[:,i]  = gaussian_values @ indicators
+         self.jump_values[:,i]      = jump_values @ indicators
+         
+    self.values = self.gaussian_values + self.jump_values</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate_slice"><code class="name flex">
+<span>def <span class="ident">simulate_slice</span></span>(<span>self, slice_convolution_type)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>implements algorithm [] from []. <code>slice_convolution_type</code> can be either [to add]</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate_slice(self,slice_convolution_type):
+    &#34;&#34;&#34;implements algorithm [] from []. `slice_convolution_type` can be either [to add]&#34;&#34;&#34;
+    if self.decorrelation_time == -np.inf:
+        self.compute_slice_areas_infinite_decorrelation_time()
+        self.simulate_slice_infinite_decorrelation_time(slice_convolution_type)
+         
+    elif self.decorrelation_time &gt; -np.inf:
+        assert(self.trawl_function(self.decorrelation_time)) == 0,&#39;please check decorrelation time&#39; 
+        self.compute_slice_areas_finite_decorrelation_time()
+        self.simulate_slice_finite_decorrelation_time(slice_convolution_type)
+    self.values = self.gaussian_values + self.jump_values</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate_slice_finite_decorrelation_time"><code class="name flex">
+<span>def <span class="ident">simulate_slice_finite_decorrelation_time</span></span>(<span>self, slice_convolution_type)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>helper for the <code>simulate_slice</code> method</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate_slice_finite_decorrelation_time(self,slice_convolution_type):
+    &#34;&#34;&#34;helper for the `simulate_slice` method&#34;&#34;&#34;
+    
+    filter_ = np.fliplr(np.tril(np.ones(self.I),k=0)) 
+    zero_matrix  = np.zeros([self.I,self.I-1])
+
+    for simulation_nr in range(self.nr_simulations):
+        gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+        jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+        
+        if slice_convolution_type == &#39;fft&#39;:
+    
+            gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+            jump_slices = np.concatenate([zero_matrix,jump_slices],axis=1)
+    
+            #matrix with 1&#39;s on and below the secondary diagonal
+            #flip the filter to agree with np convention
+            self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+            self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+    
+        elif slice_convolution_type == &#39;diagonals&#39;:
+            raise ValueError(&#39;not yet implemented&#39;)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.simulate_slice_infinite_decorrelation_time"><code class="name flex">
+<span>def <span class="ident">simulate_slice_infinite_decorrelation_time</span></span>(<span>self, slice_convolution_type)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Helper for the <code>simulate_slice</code> method.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def simulate_slice_infinite_decorrelation_time(self,slice_convolution_type):
+    &#34;&#34;&#34;Helper for the `simulate_slice` method.&#34;&#34;&#34;
+
+    zero_matrix     = np.zeros([self.nr_trawls,self.nr_trawls-1])
+    filter_         = np.fliplr(np.tril(np.ones(self.nr_trawls),k=0)) 
+
+
+    for simulation_nr in range(self.nr_simulations):
+        
+        gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
+        jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
+        
+        if slice_convolution_type == &#39;fft&#39;:
+            gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
+            jump_slices     = np.concatenate([zero_matrix,jump_slices],axis=1)
+            
+            self.gaussian_values[simulation_nr,:] = convolve2d(gaussian_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+            self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],&#39;valid&#39;)[0]
+            
+        elif slice_convolution_type == &#39;diagonals&#39;:
+            raise ValueError(&#39;not yet implemented&#39;)
+
+    
+    raise ValueError(&#39;not yet implemented&#39;)    </code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.trawl.trawl.theoretical_acf"><code class="name flex">
+<span>def <span class="ident">theoretical_acf</span></span>(<span>self, t_values)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Computes the theoretical acf of the trawl process</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>t_values</code></strong></dt>
+<dd>array of time values </dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>d_acf</code></dt>
+<dd>a dictionary of the type
+<span><span class="MathJax_Preview">t: \text{corr}(X_0,X_t)</span><script type="math/tex">t: \text{corr}(X_0,X_t)</script></span>, where <span><span class="MathJax_Preview">t</span><script type="math/tex">t</script></span> ranges over the input array <code>t_values</code>.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def theoretical_acf(self,t_values):
+    &#34;&#34;&#34;Computes the theoretical acf of the trawl process
+    
+    Args:
+      t_values: array of time values 
+    
+    Returns:
+      d_acf: a dictionary of the type  \(t: \\text{corr}(X_0,X_t)\), where \(t\) ranges over the input array `t_values`. 
+    &#34;&#34;&#34;
+    total_area = quad(self.trawl_function,a=-np.inf,b= 0)[0]
+    d_acf=dict()
+    for t in t_values:
+        d_acf[t] = quad(self.trawl_function,a=-np.inf,b= -t)[0]/total_area
+    return d_acf</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ambit_stochastics" href="index.html">ambit_stochastics</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="ambit_stochastics.trawl.trawl" href="#ambit_stochastics.trawl.trawl">trawl</a></code></h4>
+<ul class="">
+<li><code><a title="ambit_stochastics.trawl.trawl.compute_slice_areas_finite_decorrelation_time" href="#ambit_stochastics.trawl.trawl.compute_slice_areas_finite_decorrelation_time">compute_slice_areas_finite_decorrelation_time</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.compute_slice_areas_infinite_decorrelation_time" href="#ambit_stochastics.trawl.trawl.compute_slice_areas_infinite_decorrelation_time">compute_slice_areas_infinite_decorrelation_time</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.grid_creation" href="#ambit_stochastics.trawl.trawl.grid_creation">grid_creation</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.grid_update" href="#ambit_stochastics.trawl.trawl.grid_update">grid_update</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate" href="#ambit_stochastics.trawl.trawl.simulate">simulate</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate_cpp" href="#ambit_stochastics.trawl.trawl.simulate_cpp">simulate_cpp</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate_grid" href="#ambit_stochastics.trawl.trawl.simulate_grid">simulate_grid</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate_slice" href="#ambit_stochastics.trawl.trawl.simulate_slice">simulate_slice</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate_slice_finite_decorrelation_time" href="#ambit_stochastics.trawl.trawl.simulate_slice_finite_decorrelation_time">simulate_slice_finite_decorrelation_time</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.simulate_slice_infinite_decorrelation_time" href="#ambit_stochastics.trawl.trawl.simulate_slice_infinite_decorrelation_time">simulate_slice_infinite_decorrelation_time</a></code></li>
+<li><code><a title="ambit_stochastics.trawl.trawl.theoretical_acf" href="#ambit_stochastics.trawl.trawl.theoretical_acf">theoretical_acf</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

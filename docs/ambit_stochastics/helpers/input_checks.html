@@ -53,14 +53,20 @@ def check_trawl_function(phi):
         
     phi_values = phi(np.linspace(-100,0,10**5))
     assert pd.Series(phi_values).is_monotonic_increasing,&#39;trawl_function is not increasing&#39;   
+
+#distributional checks
         
-def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params):
+def check_gaussian_params(gaussian_part_params):
         &#34;&#34;&#34;Check if the distribution of the jump part is supported and if the parameters 
-        of the Gaussian and Jump parts are floats&#34;&#34;&#34;
+        of the Gaussian part are numbers&#34;&#34;&#34;
         #gaussian part params
         assert isinstance(gaussian_part_params,tuple),&#39;gaussian_part_params is not a tuple&#39;
         assert all(isinstance(i,(int,float)) for i in gaussian_part_params),&#39;parameters of the gaussian part are not numbers&#39;
         
+            
+def check_jump_part_and_params(jump_part_name,jump_part_params):
+        &#34;&#34;&#34;Check if the distribution of the jump part is supported and if the parameters 
+        of the Jump parts are numbers&#34;&#34;&#34;
         #jump part params
         assert isinstance(jump_part_params,tuple),&#39;jump_part_params is not a tuple&#39;
         assert all(isinstance(i,(int,float)) for i in jump_part_params),&#39;parameters of the jump part are not numbers&#39;
@@ -71,6 +77,13 @@ def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params)
 
         elif jump_part_name not in [None,&#39;gamma&#39;,&#39;cauchy&#39;,&#39;poisson&#39;]:
             raise ValueError(&#39;unknown distribution&#39;)
+            
+def check_grid_params(mesh_size,truncation_grid,times_grid):
+    assert  isinstance(mesh_size,(int,float)) and mesh_size &gt;0,&#39;please check mesh size&#39;
+    assert  isinstance(truncation_grid,(int,float)) and truncation_grid &lt; 0
+            
+def check_cpp():
+    pass
         
 
 
@@ -99,23 +112,64 @@ def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params)
     assert isinstance(nr_simulations,int) and nr_simulations &gt;0</code></pre>
 </details>
 </dd>
-<dt id="ambit_stochastics.helpers.input_checks.check_levy_seed_params"><code class="name flex">
-<span>def <span class="ident">check_levy_seed_params</span></span>(<span>gaussian_part_params, jump_part_name, jump_part_params)</span>
+<dt id="ambit_stochastics.helpers.input_checks.check_cpp"><code class="name flex">
+<span>def <span class="ident">check_cpp</span></span>(<span>)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Check if the distribution of the jump part is supported and if the parameters
-of the Gaussian and Jump parts are floats</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def check_levy_seed_params(gaussian_part_params,jump_part_name,jump_part_params):
+<pre><code class="python">def check_cpp():
+    pass</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.input_checks.check_gaussian_params"><code class="name flex">
+<span>def <span class="ident">check_gaussian_params</span></span>(<span>gaussian_part_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if the distribution of the jump part is supported and if the parameters
+of the Gaussian part are numbers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_gaussian_params(gaussian_part_params):
         &#34;&#34;&#34;Check if the distribution of the jump part is supported and if the parameters 
-        of the Gaussian and Jump parts are floats&#34;&#34;&#34;
+        of the Gaussian part are numbers&#34;&#34;&#34;
         #gaussian part params
         assert isinstance(gaussian_part_params,tuple),&#39;gaussian_part_params is not a tuple&#39;
-        assert all(isinstance(i,(int,float)) for i in gaussian_part_params),&#39;parameters of the gaussian part are not numbers&#39;
-        
+        assert all(isinstance(i,(int,float)) for i in gaussian_part_params),&#39;parameters of the gaussian part are not numbers&#39;</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.input_checks.check_grid_params"><code class="name flex">
+<span>def <span class="ident">check_grid_params</span></span>(<span>mesh_size, truncation_grid, times_grid)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_grid_params(mesh_size,truncation_grid,times_grid):
+    assert  isinstance(mesh_size,(int,float)) and mesh_size &gt;0,&#39;please check mesh size&#39;
+    assert  isinstance(truncation_grid,(int,float)) and truncation_grid &lt; 0</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.input_checks.check_jump_part_and_params"><code class="name flex">
+<span>def <span class="ident">check_jump_part_and_params</span></span>(<span>jump_part_name, jump_part_params)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Check if the distribution of the jump part is supported and if the parameters
+of the Jump parts are numbers</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def check_jump_part_and_params(jump_part_name,jump_part_params):
+        &#34;&#34;&#34;Check if the distribution of the jump part is supported and if the parameters 
+        of the Jump parts are numbers&#34;&#34;&#34;
         #jump part params
         assert isinstance(jump_part_params,tuple),&#39;jump_part_params is not a tuple&#39;
         assert all(isinstance(i,(int,float)) for i in jump_part_params),&#39;parameters of the jump part are not numbers&#39;
@@ -182,7 +236,10 @@ of the Gaussian and Jump parts are floats</p></div>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="ambit_stochastics.helpers.input_checks.check1" href="#ambit_stochastics.helpers.input_checks.check1">check1</a></code></li>
-<li><code><a title="ambit_stochastics.helpers.input_checks.check_levy_seed_params" href="#ambit_stochastics.helpers.input_checks.check_levy_seed_params">check_levy_seed_params</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.input_checks.check_cpp" href="#ambit_stochastics.helpers.input_checks.check_cpp">check_cpp</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.input_checks.check_gaussian_params" href="#ambit_stochastics.helpers.input_checks.check_gaussian_params">check_gaussian_params</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.input_checks.check_grid_params" href="#ambit_stochastics.helpers.input_checks.check_grid_params">check_grid_params</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.input_checks.check_jump_part_and_params" href="#ambit_stochastics.helpers.input_checks.check_jump_part_and_params">check_jump_part_and_params</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_spatio_temporal_positions" href="#ambit_stochastics.helpers.input_checks.check_spatio_temporal_positions">check_spatio_temporal_positions</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_trawl_function" href="#ambit_stochastics.helpers.input_checks.check_trawl_function">check_trawl_function</a></code></li>
 </ul>
