@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Jan 17 15:11:06 2022
-
-@author: dleon
-"""
-
 import numpy  as np
 
 def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):

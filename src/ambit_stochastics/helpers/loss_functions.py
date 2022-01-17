@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Tue Sep  7 18:22:18 2021
-
-@author: dleon
-"""
 import numpy as np
 import pandas as pd 
 
@@ -48,8 +42,7 @@ def loss_func(trawl_values,predicted_values_dict,training_window):
     return df
 
     
-#trawl_values = np.array([[1,2,3,4,5],[5,6,3,1,2],[0.5,-2,3,-4,5]])    
-#predicted_values_dict =     
+   
     
     
     

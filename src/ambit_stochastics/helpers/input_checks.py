@@ -1,4 +1,4 @@
-"""checks on the inputs to trawl processes and ambit fields"""
+"""Checks the inputs to the `trawl` and `simple_ambit_field classes`."""
 
 import pandas as pd
 import numpy as np

@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>ambit_stochastics.helpers.covariance_matrix_for_stationary_fields API documentation</title>
-<meta name="description" content="Created on Thu Jan 13 15:29:41 2022 …" />
+<title>ambit_stochastics.helpers.cov_estimator API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -20,24 +20,16 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>ambit_stochastics.helpers.covariance_matrix_for_stationary_fields</code></h1>
+<h1 class="title">Module <code>ambit_stochastics.helpers.cov_estimator</code></h1>
 </header>
 <section id="section-intro">
-<p>Created on Thu Jan 13 15:29:41 2022</p>
-<p>@author: dleon</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python"># -*- coding: utf-8 -*-
-&#34;&#34;&#34;
-Created on Thu Jan 13 15:29:41 2022
+<pre><code class="python">import numpy  as np
 
-@author: dleon
-&#34;&#34;&#34;
-import numpy  as np
-
-def covariance_matrix_estimator(values,max_lag_space,max_lag_time):
+def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):
     &#34;&#34;&#34;
     Args:
       values:
@@ -49,12 +41,12 @@ def covariance_matrix_estimator(values,max_lag_space,max_lag_time):
       result_cor
     &#34;&#34;&#34;
     nr_simulations, nr_rows, nr_columns = values.shape
-    result_cov = np.zeros((nr_simulations,max_lag_space,max_lag_time))
-    result_cor = np.zeros((nr_simulations,max_lag_space,max_lag_time))
+    result_cov = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
+    result_cor = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
 
     
-    for row in range(max_lag_space):
-        for column in range(max_lag_time):
+    for row in range(max_lag_space+1):
+        for column in range(max_lag_time+1):
             
             nr_elements = (nr_rows - row)*(nr_columns - column)
             
@@ -77,13 +69,7 @@ def covariance_matrix_estimator(values,max_lag_space,max_lag_time):
             result_cov[:,row,column] = covariances
             result_cor[:,row,column] = covariances/(variance_estimator_1 * variance_estimator_2)**0.5
             
-    return result_cov,result_cor
-
-            
-    
-            
-            
-            </code></pre>
+    return result_cov,result_cor</code></pre>
 </details>
 </section>
 <section>
@@ -93,8 +79,8 @@ def covariance_matrix_estimator(values,max_lag_space,max_lag_time):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="ambit_stochastics.helpers.covariance_matrix_for_stationary_fields.covariance_matrix_estimator"><code class="name flex">
-<span>def <span class="ident">covariance_matrix_estimator</span></span>(<span>values, max_lag_space, max_lag_time)</span>
+<dt id="ambit_stochastics.helpers.cov_estimator.compute_empirical_covariance_matrix"><code class="name flex">
+<span>def <span class="ident">compute_empirical_covariance_matrix</span></span>(<span>values, max_lag_space, max_lag_time)</span>
 </code></dt>
 <dd>
 <div class="desc"><h2 id="args">Args</h2>
@@ -108,7 +94,7 @@ result_cor</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def covariance_matrix_estimator(values,max_lag_space,max_lag_time):
+<pre><code class="python">def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):
     &#34;&#34;&#34;
     Args:
       values:
@@ -120,12 +106,12 @@ result_cor</p></div>
       result_cor
     &#34;&#34;&#34;
     nr_simulations, nr_rows, nr_columns = values.shape
-    result_cov = np.zeros((nr_simulations,max_lag_space,max_lag_time))
-    result_cor = np.zeros((nr_simulations,max_lag_space,max_lag_time))
+    result_cov = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
+    result_cor = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
 
     
-    for row in range(max_lag_space):
-        for column in range(max_lag_time):
+    for row in range(max_lag_space+1):
+        for column in range(max_lag_time+1):
             
             nr_elements = (nr_rows - row)*(nr_columns - column)
             
@@ -169,7 +155,7 @@ result_cor</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="ambit_stochastics.helpers.covariance_matrix_for_stationary_fields.covariance_matrix_estimator" href="#ambit_stochastics.helpers.covariance_matrix_for_stationary_fields.covariance_matrix_estimator">covariance_matrix_estimator</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.cov_estimator.compute_empirical_covariance_matrix" href="#ambit_stochastics.helpers.cov_estimator.compute_empirical_covariance_matrix">compute_empirical_covariance_matrix</a></code></li>
 </ul>
 </li>
 </ul>
