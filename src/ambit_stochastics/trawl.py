@@ -13,14 +13,16 @@ from scipy.signal import convolve2d #flip the filter
 
 #helper function imports
 from .helpers.input_checks  import check1
+from .helpers.input_checks  import check_grid_params
+#from .helpers.input_checks  import check_cpp_params
 from .helpers.input_checks  import check_trawl_function
 from .helpers.input_checks  import check_jump_part_and_params
 from .helpers.input_checks  import check_gaussian_params
-from .helpers.input_checks  import check_grid_params
 
  
 from .helpers.sampler       import gaussian_part_sampler 
 from .helpers.sampler       import jump_part_sampler
+from .helpers.alternative_convolution_implementation import cumulative_and_diagonal_sums
 
 #from .helpers.loss_functions import qlike_func
 #helper_module = import_file(os.path.join(Path().resolve().parent,'helpers','loss_functions'))
@@ -225,8 +227,11 @@ class trawl:
                 self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],'valid')[0]
         
             elif slice_convolution_type == 'diagonals':
-                raise ValueError('not yet implemented')
-    
+                
+                self.gaussian_values[simulation_nr,:] = cumulative_and_diagonal_sums(gaussian_slices)
+                self.jump_slices_cumulative_sum[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
+                
+                
     def simulate_slice_infinite_decorrelation_time(self,slice_convolution_type):
         """Helper for the `simulate_slice` method."""
 
@@ -247,8 +252,9 @@ class trawl:
                 self.jump_values[simulation_nr,:]     = convolve2d(jump_slices,filter_[::-1,::-1],'valid')[0]
                 
             elif slice_convolution_type == 'diagonals':
-                raise ValueError('not yet implemented')
-
+                
+                self.gaussian_values[simulation_nr,:] = cumulative_and_diagonal_sums(gaussian_slices)
+                self.jump_slices_cumulative_sum[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
         
         raise ValueError('not yet implemented')    
         
@@ -298,7 +304,7 @@ class trawl:
           i: index of the trawl to be simulated
           t: time coordinates of the cells of the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
           gaussian_values: gaussian values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
-          jump_values: jump values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \times [0,\phi(0)\)
+          jump_values: jump values for the grid on \([\\tau_{i-1},\\tau_{i-1}+\\text{truncation_grid}] \\times [0,\phi(0)\)
         
         Returns:
           gaussian_values: gaussian values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
@@ -336,7 +342,7 @@ class trawl:
                 
              elif self.times_grid[i-1] > self.times_grid[i] + self.truncation_grid:
                  #check that we have non empty intersection and update the grid
-                 t,gaussian_values,jump_values = self.grid_update(i,x,t,gaussian_values,jump_values)
+                 t,gaussian_values,jump_values = self.grid_update(i,t,gaussian_values,jump_values)
             
              indicators = x < self.trawl_function(t-self.times_grid[i])
              #print(gaussian_values.shape,indicators.shape)

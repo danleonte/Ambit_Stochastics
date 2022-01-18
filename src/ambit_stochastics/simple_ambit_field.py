@@ -7,7 +7,7 @@ from scipy.integrate import quad
 import numpy as np
 import math
 import time
-from numba import njit
+#from numba import njit
 
 from .helpers.input_checks import check_trawl_function
 from .helpers.input_checks  import check_jump_part_and_params
@@ -35,9 +35,9 @@ class simple_ambit_field:
           \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(1) > 0, \phi(t) =0\) for \(t>0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
-          jump_part_name: tuple with the parameters of the jump part distribution check helpers.sampler 
+          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler`
           for the parametrisation.
-          jump_part_params: string: name of the jump part distribution. check helpers.sampler for the parametrisation.
+          jump_part_params: string: name of the jump part distribution. check `helpers.sampler` for the parametrisation.
           batch_size: positive integer: number of points to be used at once in the `approximate_slices` method,
           in order to optimise for cache memory.
           total_nr_samples: positive integer: total number of points to be used in the `approximate_slices` method.
@@ -236,7 +236,7 @@ class simple_ambit_field:
                                         for i in range(1,self.k_t)] + [quad(self.ambit_function,a= -np.inf,b=T - self.k_t,limit=500)[0]]
  
         
-    @njit
+#    @njit
     def simulate_finite_decorrelation_time(self):
         """implementation of algorithm  [nr to be added] in [paper link]"""
         Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
@@ -263,7 +263,7 @@ class simple_ambit_field:
         self.gaussian_values =  Y_gaussian[:,self.I_s-1:self.I_s+self.k_s-1,self.I_t-1:self.I_t+self.k_t-1]
         self.jump_values     =  Y_jump[:,self.I_s-1:self.I_s+self.k_s-1,self.I_t-1:self.I_t+self.k_t-1]
 
-    @njit
+#    @njit
     def simulate_infinite_decorrelation_time(self,T):
         """implementation of algorithm  [nr to be added] in [paper link]"""
 
@@ -316,7 +316,7 @@ class simple_ambit_field:
         """Simulate the ambit field at time coordinates \(\\tau,\ldots,k_t\\tau\) and space
         coordinates \(x,\ldots,k_s x\). The marginal law of this stationary
         process is given by the independent sum of the Gaussian and jump parts. See [] for an example
-        and `helpers.sampler' for the parametrisations used. The simulated values are stored in the
+        and `helpers.sampler` for the parametrisations used. The simulated values are stored in the
         attribute `values`."""
 
         # checks
