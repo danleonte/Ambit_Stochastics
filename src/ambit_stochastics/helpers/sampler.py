@@ -1,6 +1,4 @@
-"""Samplers for the Gaussian and jump parts of the Levy basis; we include the drift 
-   term in the Gaussian part. The distributions are parametrised as in
-           https://docs.scipy.org/doc/scipy/reference/stats.html"""
+"""Samplers for the Gaussian, jump and cpp parts of the Levy basis. The distributions are parametrised as in https://docs.scipy.org/doc/scipy/reference/stats.html"""
          
 import numpy as np
 from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\

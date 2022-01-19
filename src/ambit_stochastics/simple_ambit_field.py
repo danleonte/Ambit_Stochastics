@@ -1,3 +1,4 @@
+"""A container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y = L(A_t(x))\)."""
 ###################################################################
 #imports 
 from collections     import Counter
@@ -22,8 +23,7 @@ class simple_ambit_field:
     def __init__(self, x, tau, k_s, k_t, nr_simulations, ambit_function=None, decorrelation_time=-np.inf,
                  gaussian_part_params=None, jump_part_name=None, jump_part_params=None,
                  batch_size=None, total_nr_samples=None, values=None):
-        """Container class for the simulation, parameter inference and forecasting of ambit fields of the
-        form \(Y_t(x) = L(A+(x,t))\).
+        """Container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y_t(x) = L(A+(x,t))\).
         
         Args:
           x: positive number: spacing between ambit sets on the space axis.
@@ -31,18 +31,14 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function
-          \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(1) > 0, \phi(t) =0\) for \(t>0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) > 1, \phi(t) =0\) for \(t>0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
-          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler`
-          for the parametrisation.
+          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
           jump_part_params: string: name of the jump part distribution. check `helpers.sampler` for the parametrisation.
-          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method,
-          in order to optimise for cache memory.
+          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method, in order to optimise for cache memory.
           total_nr_samples: positive integer: total number of points to be used in the `approximate_slices` method.
-          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or 
-          simulated with the method `simple_ambit_field.simulate`.
+          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or simulated with the method `simple_ambit_field.simulate`.
         """
 
         #################################################################################

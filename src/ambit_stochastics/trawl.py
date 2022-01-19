@@ -1,5 +1,4 @@
-"""A container class for the simulation, parameter inference and forecasting of trawl processes.
-"""
+"""A container class for the simulation, parameter inference and forecasting of trawl processes \(X_t = L(A_t)\)."""
 ################## module imports ##################
 from scipy.signal import convolve2d 
 from scipy.integrate import quad
@@ -29,7 +28,7 @@ from .helpers.alternative_convolution_implementation import cumulative_and_diago
 ###################################################
 
 class trawl:
-    def __init__(self,nr_trawls, nr_simulations, trawl_function=None, tau = None, 
+    def __init__(self,nr_simulations,nr_trawls = None, trawl_function=None, tau = None, 
                 decorrelation_time = -np.inf, mesh_size = None, times_grid = None, 
                 truncation_grid = None, gaussian_part_params= (0,0), jump_part_name=None,
                 jump_part_params= None, cpp_times = None, cpp_truncation = None, cpp_part_name = None, cpp_part_params = None,
@@ -132,9 +131,9 @@ class trawl:
         self.cpp_times       = cpp_times
             
         ### arrays containing the gaussian, jump and cpp parts of the simulation
-        self.gaussian_values          =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
-        self.jump_values              =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
-        self.cpp_values               =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
+        self.gaussian_values          =   None 
+        self.jump_values              =   None 
+        self.cpp_values               =   None 
         
         ### passed by the user or to be simulated using one of the simulation methods ### 
         self.values                   =   values 
@@ -435,38 +434,46 @@ class trawl:
            method: one of the strings `cpp`, `grid` or `slice`
            slice_convolution_type: if method is set to `slice`, this can be one of the strings `diagonals` or `ftt`, depending on the way we add up the simulated slices. This argument is ignored if method is set to `grid` or `cpp`."""
 
-        
+         #general checks
          assert isinstance(self.nr_simulations,int) and self.nr_simulations >0
+         assert method in {'cpp','grid','slice'},'simulation method not supported'
          check_trawl_function(self.trawl_function)
          check_gaussian_params(self.gaussian_part_params)
          
-         assert method in {'cpp','grid','slice'},'simulation method not supported'
          
+         #algorithm specific checks and attribute setting
          if method == 'grid':
-             #checks
              check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
              check_grid_params(self.mesh_size,self.truncation_grid,self.times_grid)
              
              self.nr_trawls = len(self.times_grid)
              self.vol = self.mesh_size **2
-             self.simulate_grid()
              
          elif method == 'cpp':
-             #checks
              check_cpp_params(self.cpp_part_name, self.cpp_part_params,self.cpp_intensity,self.custom_sampler)
 
              self.nr_trawls = len(self.cpp_times)
-             self.simulate_cpp()
                  
          elif method == 'slice':
-             #checks
              assert slice_convolution_type in {'fft','diagonals'}
              assert isinstance(self.nr_trawls,int) and self.nr_trawls > 0,'nr_trawls should be a  strictly positive integer'
              check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
 
-             self.simulate_slice(slice_convolution_type)    
+             
+         self.gaussian_values          =   np.zeros(shape = [self.nr_simulations,self.nr_trawls]) 
+         self.jump_values              =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
+         self.cpp_values               =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
         
+        
+         if method == 'grid':
+             self.simulate_grid()
+         elif method == 'cpp':
+             self.simulate_cpp()
+         elif method == 'slice':
+             self.simulate_slice(slice_convolution_type)    
+
          self.values = self.gaussian_values + self.jump_values + self.cpp_values
+         
              
     def theoretical_acf(self,t_values):
         """Computes the theoretical acf of the trawl process

@@ -1,1 +1,1 @@
-""""A package for the practical study of Ambit Stochastics."""
+"""A package for the practical study of Ambit Stochastics."""
