@@ -1,20 +1,16 @@
-###################################
-#module imports
+"""A container class for the simulation, parameter inference and forecasting of trawl processes.
+"""
+################## module imports ##################
+from scipy.signal import convolve2d 
 from scipy.integrate import quad
+#from numba import njit
 import numpy as np
-import pandas as pd
 import math
 
-#from scipy.optimize import minimize
-from scipy.signal import convolve2d #flip the filter 
-#from statsmodels.tsa.stattools import acf
-#from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\
-#                           geninvgauss,poisson 
-
-#helper function imports
-from .helpers.input_checks  import check1
+#flip the filter  in the convolution step
+#from .helpers.input_checks  import check1
 from .helpers.input_checks  import check_grid_params
-#from .helpers.input_checks  import check_cpp_params
+from .helpers.input_checks  import check_cpp_params
 from .helpers.input_checks  import check_trawl_function
 from .helpers.input_checks  import check_jump_part_and_params
 from .helpers.input_checks  import check_gaussian_params
@@ -22,65 +18,97 @@ from .helpers.input_checks  import check_gaussian_params
  
 from .helpers.sampler       import gaussian_part_sampler 
 from .helpers.sampler       import jump_part_sampler
+from .helpers.sampler       import generate_cpp_points
+#from .heleprs.sampler     import generate_cpp_values_associated_to_points
+
 from .helpers.alternative_convolution_implementation import cumulative_and_diagonal_sums
 
-#from .helpers.loss_functions import qlike_func
+#from scipy.optimize import minimize
+#from statsmodels.tsa.stattools import acf
 #helper_module = import_file(os.path.join(Path().resolve().parent,'helpers','loss_functions'))
-
-#qlike = helper_module.qlike_func
-####################################
+###################################################
 
 class trawl:
     def __init__(self,nr_trawls, nr_simulations, trawl_function=None, tau = None, 
                 decorrelation_time = -np.inf, mesh_size = None, times_grid = None, 
-                truncation_grid = None, truncation_cpp = None, gaussian_part_params=None, 
-                jump_part_name=None,jump_part_params=None,cpp_part_name = None, 
-                cpp_part_params = None, cpp_intensity = None, values=None):
-        """A container class for the simulation, parameter inference and forecasting of trawl processes.
+                truncation_grid = None, gaussian_part_params= (0,0), jump_part_name=None,
+                jump_part_params= None, cpp_times = None, cpp_truncation = None, cpp_part_name = None, cpp_part_params = None,
+                cpp_intensity = None, custom_sampler = None, values=None):
+        """Please consult the `Trawl processes example usage` jupyter notebook from https://github.com/danleonte/Ambit_Stochastics
+        to see a practical example with detailed explanations.
         
-        The implemented simulation algorithms are the grid, slice and cpp algorithms, as described in [paper link].
-        
-        The arguments required for the `simulate` method are `nr_trawls`,`nr_simulations`,
-        `trawl_function` and `gaussian_part_params`. Further, the slice method requires `tau`,
-        `decorrelation_time`,`jump_part_name`,`jump_part_params`, the grid method requires
-        `mesh_size`,`times_grid`,`truncation_grid`,`jump_part_name`,`jump_part_params` and
-        the cpp method requires `truncation_cpp,`,`cpp_part_name`, 
-        `cpp_part_params`, `cpp_intensity`.
+        The implemented simulation algorithms are the grid, slice and cpp algorithms, as described in [paper link]. Parameter inference and forecasting methods to be added.
+
+        The arguments required for the `simulate` method are `nr_simulations` and `trawl_function`.
+        Further, the slice method requires `nr_trawls`,
+        `tau`, `decorrelation_time`, `gaussian_part_params`, `jump_part_name`,`jump_part_params`,
+         the grid method requires
+        `mesh_size`,`times_grid`,`truncation_grid`, `gaussian_part_params`,`jump_part_name`,`jump_part_params` and
+         the cpp method requires `cpp_truncation,`,`cpp_part_name`, `cpp_times`
+        `cpp_part_params`, `cpp_intensity` and `custom_sampler`.
                
         Args:
-          nr_simulation: positive integer: number of simulations.
-          nr_trawls: positive integer: number of trawls on the time axis.
-          trawl_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\)
-          with \(\phi(1) =0, \phi(t) =0\) for \(t>0\).
-          gaussian_part_params: tuple with the mean and standard deviation of the Gaussian Part.
-          tau: positive number: spacing between ambit sets on the time axis, used in the slice simulation method.
-          decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise, used in the slice simulation method.
-          jump_part_name: a
-          jump_part_params: b
-          truncation_grid: c
+          The following parameters are for any of simulation algorithms.
+          
+          nr_simulations: positive integer: number of simulations of the trawl process.
+          trawl_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) >0, \phi(t) =0\) for \(t>0\).
+
+          The following parameters are for both the slice and grid simulation methods.
+          
+          gaussian_part_params: tuple with the mean and standard deviation of the Gaussian Part
+          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
+          jump_part_params: string: name of the jump part distribution. check `helpers.sampler` for the parametrisation.
+
+          The following parameters are for the slice simulation method.
+          
+          nr_trawls: positive integer: number of ambit sets on the time axis.
+          tau: positive number: spacing between ambit sets on the time axis; the times at which we simulate the trawl processes are then \(\\tau, \\ldots,\\text{nr_trawls} \ \\tau\).
+          decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise. For example, if \(\phi(x) = (1+x)(x>-1)(x<=0)\), `decorrelation_time =-1`.
+      
+          The following parameters are for the grid simulation method.
+
+          mesh_size: positive float, side-length of each cell.
+          times_grid: array: times at which to simulate the trawl process, necessarly in increasing order.
+          truncation_grid: strictly negative float: in the grid simulation method, we simulate the parts of the ambit sets contained in \(t > \\text{truncation_grid} + \\text{min(times_grid)}\).
+
+          The following parameters are for both the cpp simulation methods.
+
+          cpp_times: array: times at which to simulate the trawl process.
+          cpp_truncation: strictly negative float: we simulate the parts of the ambit sets contained in \(t > \\text{cpp_truncation} + \\text{min(cpp_times)}\).
+          cpp_part_name: to add
+          cpp_part_params: to add
+          cpp_intensity: to add
+          custom_sampler: to add
+              
+            
+          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or simulated with the method `simple_ambit_field.simulate`.
          """
        
         #general attributes
-        check1(nr_trawls, nr_simulations)
-        self.nr_trawls                      = nr_trawls
-        self.nr_simulations                 = nr_simulations
-        
+        self.nr_simulations  = nr_simulations
         #attributes required for simulation
         self.trawl_function                 = trawl_function
+        
+        #########################################################################
+        ### attributes required for both grid and slice simulation algorithms ###
+        
+        # distributional parameters of the gaussian and jump parts of the levy seed 
+        # jump_part_name and jump_part_params are also requried for the grid method
+        
         self.gaussian_part_params           = gaussian_part_params
+        self.jump_part_name                 = jump_part_name
+        self.jump_part_params               = jump_part_params
 
         
         #############################################################################     
         ### attributes required only for the slice partition simulation algorithm ###  
-        
+   
+        self.nr_trawls                      = nr_trawls
         self.tau                            = tau
         self.decorrelation_time             = decorrelation_time
         self.I                              = None
         self.slice_areas_matrix             = None
-        # distributional parameters of the gaussian and jump parts of the levy seed 
-        # jump_part_name and jump_part_params are also requried for the grid method
-        self.jump_part_name                 = jump_part_name
-        self.jump_part_params               = jump_part_params
+
         
         ################################################################## 
         ### attributes required only for the grid simulation algorithm ###
@@ -96,25 +124,26 @@ class trawl:
         ################################################################## 
         ### attributes required only for the cpp simulation algorithm  ###
         
+        self.cpp_truncation  = cpp_truncation
         self.cpp_part_name   = cpp_part_name 
         self.cpp_part_params = cpp_part_params
         self.cpp_intensity   = cpp_intensity
+        self.custom_sampler  = custom_sampler
+        self.cpp_times       = cpp_times
             
         ### arrays containing the gaussian, jump and cpp parts of the simulation
-        self.gaussian_values          =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
-        self.jump_values              =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
-        self.cpp_values               =   np.empty(shape = [self.nr_simulations,self.nr_trawls])
+        self.gaussian_values          =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
+        self.jump_values              =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
+        self.cpp_values               =   np.zeros(shape = [self.nr_simulations,self.nr_trawls])
         
-        ### passed by the user or simulated using one of the simulation methods ### 
+        ### passed by the user or to be simulated using one of the simulation methods ### 
         self.values                   =   values 
         
+        #if the values are passed by the use and not simulated
+        if values != None:
+            self.nr_simulations, self.nr_tralws = self.values.shape
+            
         
-        ##################################################################
-        ### attributes required only for the cpp simulation algorithm  ###
-        
-        self.cpp_part_name                  = cpp_part_name
-        self.cpp_part_params                = cpp_part_params
-        self.cpp_intensity                  = cpp_intensity
         
     ######################################################################
     ###  Simulation algorithms:      I slice, II grid, III cpp         ###
@@ -127,6 +156,14 @@ class trawl:
     def compute_slice_areas_finite_decorrelation_time(self):
         """Computes the \(I \\times k\) matrix 
         
+        \[\\begin{bmatrix}
+              a_0     &  a_0 - a_1          \\ldots  & a_0 - a_1          \\\\
+              a_1     &  a_1 - a_2          \\ldots  & a_1 - a_2          \\\\
+              a_2     &  a_2 - a_3          \\ldots  & a_2 - a_3          \\\\
+                      &                     \\vdots  &                    \\\\
+              a_{k-2} & a_{k-2} - a_{k-1}   \\ldots  & a_{k-2} - a_{k-1}  \\\\
+              a_{k-1} & a_{k-1}                      & a_{k-1}            
+        \\end{bmatrix}\]
         
         corresponding to the areas of the slices 
         
@@ -137,7 +174,18 @@ class trawl:
          \\vdots &       &  \\vdots  & \\vdots  \\\\
         L(S_{I1}) &  \\ldots &  L(S_{I,k-1}) & L(S_{I,k})
         \\end{bmatrix}
-        \]"""
+        \]
+            
+        where \(k =\) `self.nr_trawls` and 
+        
+        \[\\begin{align}
+        a_0 &= \int_{-\\tau}^0 \phi(u)du, \\\\
+            \\vdots & \\\\
+        a_{k-2} &= \int_{(-k+1)\\tau} ^{(-k+2)  \\tau} \phi(u) du, \\\\
+        a_{k-1} &= \int_{\\text{decorrelation_time}}^{(-k+1)\\tau} \phi(u)du.
+        \\end{align} 
+        \]            
+            """
         self.I = math.ceil(-self.decorrelation_time/self.tau)
         
         s_i1 = [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
@@ -229,7 +277,7 @@ class trawl:
             elif slice_convolution_type == 'diagonals':
                 
                 self.gaussian_values[simulation_nr,:] = cumulative_and_diagonal_sums(gaussian_slices)
-                self.jump_slices_cumulative_sum[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
+                self.jump_values[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
                 
                 
     def simulate_slice_infinite_decorrelation_time(self,slice_convolution_type):
@@ -254,12 +302,13 @@ class trawl:
             elif slice_convolution_type == 'diagonals':
                 
                 self.gaussian_values[simulation_nr,:] = cumulative_and_diagonal_sums(gaussian_slices)
-                self.jump_slices_cumulative_sum[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
+                self.jump_values[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
         
         raise ValueError('not yet implemented')    
         
     def simulate_slice(self,slice_convolution_type):
-        """implements algorithm [] from []. `slice_convolution_type` can be either [to add]"""
+        """implements algorithm [] from [] and simulates teh trawl process at 
+        \(\\tau,\\ldots,\\text{nr_trawls}\ \\tau\). `slice_convolution_type` can be either [to add]"""
         if self.decorrelation_time == -np.inf:
             self.compute_slice_areas_infinite_decorrelation_time()
             self.simulate_slice_infinite_decorrelation_time(slice_convolution_type)
@@ -268,7 +317,7 @@ class trawl:
             assert(self.trawl_function(self.decorrelation_time)) == 0,'please check decorrelation time' 
             self.compute_slice_areas_finite_decorrelation_time()
             self.simulate_slice_finite_decorrelation_time(slice_convolution_type)
-        self.values = self.gaussian_values + self.jump_values
+        #self.values = self.gaussian_values + self.jump_values
 
                       
        ############################ II Grid ############################
@@ -309,7 +358,7 @@ class trawl:
         Returns:
           gaussian_values: gaussian values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)
           jump_values: jump values for the grid cells on \([\\tau_{i},\\tau_{i}+\\text{truncation_grid}] \\times [0,\phi(0)]\)                                                                                                                                                                                                
-        """
+         """
           
 
         ind_to_keep       =  t >= (self.times_grid[i] + self.truncation_grid)
@@ -333,6 +382,9 @@ class trawl:
     def simulate_grid(self):
         """Simulate the trawl proces at times `self.times_grid`, which don't have to be
         equally distant, via the grid method."""
+        
+        #If `times_grid` are equidistnant, we do not need to compute `indicators` at each iteration, speeding up the process        
+
         for i in range(len(self.times_grid)):
              if (i==0) or (self.times_grid[i-1] <= self.times_grid[i] + self.truncation_grid):
                  #check that we are creating the grid for the first time or that 
@@ -349,13 +401,30 @@ class trawl:
              self.gaussian_values[:,i]  = gaussian_values @ indicators
              self.jump_values[:,i]      = jump_values @ indicators
              
-        self.values = self.gaussian_values + self.jump_values
+        #self.values = self.gaussian_values + self.jump_values
        ########################### III cpp ###########################
-       
-    def simulate_cpp():
+#    @njit   
+    def simulate_cpp(self):
         """ text to be added"""
-        pass
-
+        min_t = min(self.cpp_times) + self.cpp_truncation
+        max_t = max(self.cpp_times)
+        min_x = 0
+        max_x = self.trawl_function(0)
+        
+        for simulation_nr in range(self.nr_simulations):
+            
+        
+            points_x, points_t, associated_values = generate_cpp_points(min_x = min_x, max_x = max_x, 
+                        min_t = min_t, max_t = max_t, cpp_part_name = self.cpp_part_name,
+                        cpp_part_params = self.cpp_part_params, cpp_intensity = self.cpp_intensity,
+                        custom_sampler = self.custom_sampler)
+                                    
+            #(x_i,t_i) in A_t if t < t_i and x_i < phi(t_i-t)
+            indicator_matrix = np.tile(points_x[:,np.newaxis],(1,self.nr_trawls)) < \
+                            self.trawl_function(np.subtract.outer(points_t, self.cpp_times))
+            self.cpp_values[simulation_nr,:] = associated_values @ indicator_matrix
+                            
+        
        ####################### simulate meta-method #######################
     def simulate(self,method,slice_convolution_type='diagonals'):
          """Function to simulate from the trawl function. Contains sanity checks
@@ -363,30 +432,41 @@ class trawl:
          method.
          
          Args:
-           method: one of the strings cpp, grid or slice
-           slice_convolution_type: if method is set to slice, this can be one of 
-           the strings diagonals or ftt, depending on the way we add up the simulated
-           slice. This argument is ignored if method is set to grid or cpp."""
+           method: one of the strings `cpp`, `grid` or `slice`
+           slice_convolution_type: if method is set to `slice`, this can be one of the strings `diagonals` or `ftt`, depending on the way we add up the simulated slices. This argument is ignored if method is set to `grid` or `cpp`."""
+
         
+         assert isinstance(self.nr_simulations,int) and self.nr_simulations >0
          check_trawl_function(self.trawl_function)
          check_gaussian_params(self.gaussian_part_params)
          
          assert method in {'cpp','grid','slice'},'simulation method not supported'
          
          if method == 'grid':
+             #checks
              check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
              check_grid_params(self.mesh_size,self.truncation_grid,self.times_grid)
+             
+             self.nr_trawls = len(self.times_grid)
              self.vol = self.mesh_size **2
              self.simulate_grid()
              
          elif method == 'cpp':
+             #checks
+             check_cpp_params(self.cpp_part_name, self.cpp_part_params,self.cpp_intensity,self.custom_sampler)
+
+             self.nr_trawls = len(self.cpp_times)
              self.simulate_cpp()
                  
          elif method == 'slice':
+             #checks
              assert slice_convolution_type in {'fft','diagonals'}
+             assert isinstance(self.nr_trawls,int) and self.nr_trawls > 0,'nr_trawls should be a  strictly positive integer'
              check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
 
-             self.simulate_slice(slice_convolution_type)         
+             self.simulate_slice(slice_convolution_type)    
+        
+         self.values = self.gaussian_values + self.jump_values + self.cpp_values
              
     def theoretical_acf(self,t_values):
         """Computes the theoretical acf of the trawl process

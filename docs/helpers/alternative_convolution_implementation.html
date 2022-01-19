@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>ambit_stochastics.helpers.alternative_implementation_for_convolution API documentation</title>
+<title>ambit_stochastics.helpers.alternative_convolution_implementation API documentation</title>
 <meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -20,7 +20,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>ambit_stochastics.helpers.alternative_implementation_for_convolution</code></h1>
+<h1 class="title">Module <code>ambit_stochastics.helpers.alternative_convolution_implementation</code></h1>
 </header>
 <section id="section-intro">
 <details class="source">
@@ -28,16 +28,10 @@
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">import numpy as np
-
-def all_traces(x):
-    &#34;&#34;&#34;computes the sums on paralel diagonals, as described in [] of []&#34;&#34;&#34;
-    assert x.shape[0] == x.shape[1],&#39;the input matrix is not a square matrix&#39;
-    x = x[::-1,:]
-    jj = np.tile(np.arange(x.shape[1]),x.shape[0])
-    ii = (np.arange(x.shape[1])+np.arange(x.shape[0])[::-1,None]).ravel()
-    z = np.zeros(((x.shape[0]+x.shape[1]-1),x.shape[1]),int)
-    z[ii,jj] = x.ravel()
-    return z.sum(axis=1)[:x.shape[0]]</code></pre>
+def cumulative_and_diagonal_sums(a):
+    k = a.shape[-1] #nr_trawls
+    a = np.cumsum(a[::-1],axis=0)[::-1]
+    return np.bincount(sum(np.indices(a.shape)).flat, a.flat)[:k]</code></pre>
 </details>
 </section>
 <section>
@@ -47,24 +41,19 @@ def all_traces(x):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="ambit_stochastics.helpers.alternative_implementation_for_convolution.all_traces"><code class="name flex">
-<span>def <span class="ident">all_traces</span></span>(<span>x)</span>
+<dt id="ambit_stochastics.helpers.alternative_convolution_implementation.cumulative_and_diagonal_sums"><code class="name flex">
+<span>def <span class="ident">cumulative_and_diagonal_sums</span></span>(<span>a)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>computes the sums on paralel diagonals, as described in [] of []</p></div>
+<div class="desc"></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def all_traces(x):
-    &#34;&#34;&#34;computes the sums on paralel diagonals, as described in [] of []&#34;&#34;&#34;
-    assert x.shape[0] == x.shape[1],&#39;the input matrix is not a square matrix&#39;
-    x = x[::-1,:]
-    jj = np.tile(np.arange(x.shape[1]),x.shape[0])
-    ii = (np.arange(x.shape[1])+np.arange(x.shape[0])[::-1,None]).ravel()
-    z = np.zeros(((x.shape[0]+x.shape[1]-1),x.shape[1]),int)
-    z[ii,jj] = x.ravel()
-    return z.sum(axis=1)[:x.shape[0]]</code></pre>
+<pre><code class="python">def cumulative_and_diagonal_sums(a):
+    k = a.shape[-1] #nr_trawls
+    a = np.cumsum(a[::-1],axis=0)[::-1]
+    return np.bincount(sum(np.indices(a.shape)).flat, a.flat)[:k]</code></pre>
 </details>
 </dd>
 </dl>
@@ -85,7 +74,7 @@ def all_traces(x):
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="ambit_stochastics.helpers.alternative_implementation_for_convolution.all_traces" href="#ambit_stochastics.helpers.alternative_implementation_for_convolution.all_traces">all_traces</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.alternative_convolution_implementation.cumulative_and_diagonal_sums" href="#ambit_stochastics.helpers.alternative_convolution_implementation.cumulative_and_diagonal_sums">cumulative_and_diagonal_sums</a></code></li>
 </ul>
 </li>
 </ul>

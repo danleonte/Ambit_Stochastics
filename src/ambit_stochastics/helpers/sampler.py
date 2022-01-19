@@ -4,7 +4,7 @@
          
 import numpy as np
 from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\
-                            geninvgauss,poisson             
+                            geninvgauss,bernoulli,binom,nbinom,poisson,logser           
 
 def gaussian_part_sampler(gaussian_part_params,areas):
     """Simulates the Gaussian part (including drift) of the Levy basis over disjoint sets
@@ -56,7 +56,50 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
     ###discrete distributions
     elif distr_name == 'poisson':
         lambda_poisson = jump_part_params[0]
-        samples = poisson.rvs(mu = lambda_poisson * areas,loc=0)
+        samples = poisson.rvs(mu = lambda_poisson * areas,loc=0)     
     
+    return samples 
 
-    return samples       
+def generate_cpp_values_associated_to_points(nr_points,cpp_part_name,cpp_part_params,custom_sampler):  
+    if cpp_part_name == 'custom':
+         return custom_sampler(nr_points)
+    
+    elif cpp_part_name == 'bernoulli':
+        
+         return bernoulli.rvs(p = cpp_part_params[0], size = nr_points)
+         
+    elif cpp_part_name == 'poisson':
+         
+         return poisson.rvs(mu = cpp_part_params[0], size = nr_points)
+     
+    elif cpp_part_name == 'logser':
+        return logser.rvs(p = cpp_part_params[0], size = nr_points)
+    
+    elif cpp_part_name == 'binom':
+        
+         return binom.rvs(n = cpp_part_params[0], p = cpp_part_params[1], size = nr_points)
+        
+    elif cpp_part_name == 'nbinom':
+        
+         return nbinom.rvs(n = cpp_part_params[0], p = cpp_part_params[1], size = nr_points)
+
+        
+        
+        
+
+def generate_cpp_points(min_x,max_x,min_t,max_t,cpp_part_name,cpp_part_params,cpp_intensity,custom_sampler):
+    
+    area_times_intensity = (max_x-min_x)*(max_t-min_t) * cpp_intensity  
+    nr_points = poisson.rvs(mu = area_times_intensity)
+    points_x = np.random.uniform(low = min_x, high = max_x, size = nr_points)
+    points_t = np.random.uniform(low = min_t, high = max_t, size = nr_points)
+    
+    associated_values = generate_cpp_values_associated_to_points(nr_points,cpp_part_name,\
+                                             cpp_part_params,custom_sampler)
+    
+    return points_x,points_t,associated_values
+        
+    
+    
+    
+    
