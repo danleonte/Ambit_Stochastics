@@ -79,7 +79,6 @@ class trawl:
           cpp_intensity: to add
           custom_sampler: to add
               
-            
           values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or simulated with the method `simple_ambit_field.simulate`.
          """
        

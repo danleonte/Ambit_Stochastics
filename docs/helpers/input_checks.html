@@ -82,11 +82,34 @@ def check_grid_params(mesh_size,truncation_grid,times_grid):
     assert  isinstance(mesh_size,(int,float)) and mesh_size &gt;0,&#39;please check mesh size&#39;
     assert  isinstance(truncation_grid,(int,float)) and truncation_grid &lt; 0
             
-def check_cpp():
-    pass
+def check_cpp_params(cpp_part_name, cpp_part_params, cpp_intensity, custom_sampler):
+    assert  isinstance(cpp_intensity,(int,float)) and cpp_intensity &gt;0,&#39;please check mesh size&#39; 
+
+    assert cpp_part_name in [&#39;poisson&#39;,&#39;bernoulli&#39;,&#39;binom&#39;,&#39;nbinom&#39;,&#39;logser&#39;,&#39;custom&#39;],&#39;cpp_part_name should be one of the \
+                following: poisson, binom, nbinom, logser, custom&#39;
+    
+    if cpp_part_name == &#39;custom&#39;:
+        assert callable(custom_sampler),&#39;cpp sampler should be a function&#39;
+    
+    elif  cpp_part_name in [&#39;poisson&#39;,&#39;bernoulli&#39;,&#39;logser&#39;]:
+        assert isinstance(cpp_part_params,tuple) and len(cpp_part_params) == 1,&#39;cpp_part_params should be a tuple of 1 element&#39; 
+        assert isinstance(cpp_part_params[0],(int,float)) and cpp_part_params[0] &gt;=0,&#39;the first element in cpp_part_params should be a non-negative  float&#39;
+        
+        if cpp_part_name == &#39;logser&#39;:
+            assert cpp_part_params[0] &lt; 1, &#39;cpp_part_params[0] should be strictly less than 1&#39;
+        
+        elif cpp_part_name == &#39;bernoulli&#39;:
+            assert cpp_part_params[0] &lt;=1 , &#39;cpp_part_params[0] should be less than or equal than 1&#39;
+        
+    elif cpp_part_name == &#39;binom&#39; or cpp_part_name == &#39;nbinom&#39;:
+        assert isinstance(cpp_part_params,tuple) and len(cpp_part_params) == 2,&#39;cpp_part_params should be a tuple with 2 elements&#39; 
+        assert isinstance(cpp_part_params[0],int) and cpp_part_params[0] &gt; 0,&#39;first parameter in cpp_part_params should be a positive integer&#39;
+        assert isinstance(cpp_part_params[1],float) and 1 &gt;= cpp_part_params[1] &gt;= 0,&#39;second parameter in cpp_part_params should be a float in [0,1]&#39;
         
 
-
+    if cpp_part_name != &#39;custom&#39; and custom_sampler != None:
+        raise ValueError(&#39;please check whether you are trying to use a custom sampler for \
+                         a particular distribution or one of the distributions poisson, binom, nbinom, bernoulli&#39;)
         </code></pre>
 </details>
 </section>
@@ -112,8 +135,8 @@ def check_cpp():
     assert isinstance(nr_simulations,int) and nr_simulations &gt;0</code></pre>
 </details>
 </dd>
-<dt id="ambit_stochastics.helpers.input_checks.check_cpp"><code class="name flex">
-<span>def <span class="ident">check_cpp</span></span>(<span>)</span>
+<dt id="ambit_stochastics.helpers.input_checks.check_cpp_params"><code class="name flex">
+<span>def <span class="ident">check_cpp_params</span></span>(<span>cpp_part_name, cpp_part_params, cpp_intensity, custom_sampler)</span>
 </code></dt>
 <dd>
 <div class="desc"></div>
@@ -121,8 +144,34 @@ def check_cpp():
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def check_cpp():
-    pass</code></pre>
+<pre><code class="python">def check_cpp_params(cpp_part_name, cpp_part_params, cpp_intensity, custom_sampler):
+    assert  isinstance(cpp_intensity,(int,float)) and cpp_intensity &gt;0,&#39;please check mesh size&#39; 
+
+    assert cpp_part_name in [&#39;poisson&#39;,&#39;bernoulli&#39;,&#39;binom&#39;,&#39;nbinom&#39;,&#39;logser&#39;,&#39;custom&#39;],&#39;cpp_part_name should be one of the \
+                following: poisson, binom, nbinom, logser, custom&#39;
+    
+    if cpp_part_name == &#39;custom&#39;:
+        assert callable(custom_sampler),&#39;cpp sampler should be a function&#39;
+    
+    elif  cpp_part_name in [&#39;poisson&#39;,&#39;bernoulli&#39;,&#39;logser&#39;]:
+        assert isinstance(cpp_part_params,tuple) and len(cpp_part_params) == 1,&#39;cpp_part_params should be a tuple of 1 element&#39; 
+        assert isinstance(cpp_part_params[0],(int,float)) and cpp_part_params[0] &gt;=0,&#39;the first element in cpp_part_params should be a non-negative  float&#39;
+        
+        if cpp_part_name == &#39;logser&#39;:
+            assert cpp_part_params[0] &lt; 1, &#39;cpp_part_params[0] should be strictly less than 1&#39;
+        
+        elif cpp_part_name == &#39;bernoulli&#39;:
+            assert cpp_part_params[0] &lt;=1 , &#39;cpp_part_params[0] should be less than or equal than 1&#39;
+        
+    elif cpp_part_name == &#39;binom&#39; or cpp_part_name == &#39;nbinom&#39;:
+        assert isinstance(cpp_part_params,tuple) and len(cpp_part_params) == 2,&#39;cpp_part_params should be a tuple with 2 elements&#39; 
+        assert isinstance(cpp_part_params[0],int) and cpp_part_params[0] &gt; 0,&#39;first parameter in cpp_part_params should be a positive integer&#39;
+        assert isinstance(cpp_part_params[1],float) and 1 &gt;= cpp_part_params[1] &gt;= 0,&#39;second parameter in cpp_part_params should be a float in [0,1]&#39;
+        
+
+    if cpp_part_name != &#39;custom&#39; and custom_sampler != None:
+        raise ValueError(&#39;please check whether you are trying to use a custom sampler for \
+                         a particular distribution or one of the distributions poisson, binom, nbinom, bernoulli&#39;)</code></pre>
 </details>
 </dd>
 <dt id="ambit_stochastics.helpers.input_checks.check_gaussian_params"><code class="name flex">
@@ -236,7 +285,7 @@ of the Jump parts are numbers</p></div>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="ambit_stochastics.helpers.input_checks.check1" href="#ambit_stochastics.helpers.input_checks.check1">check1</a></code></li>
-<li><code><a title="ambit_stochastics.helpers.input_checks.check_cpp" href="#ambit_stochastics.helpers.input_checks.check_cpp">check_cpp</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.input_checks.check_cpp_params" href="#ambit_stochastics.helpers.input_checks.check_cpp_params">check_cpp_params</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_gaussian_params" href="#ambit_stochastics.helpers.input_checks.check_gaussian_params">check_gaussian_params</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_grid_params" href="#ambit_stochastics.helpers.input_checks.check_grid_params">check_grid_params</a></code></li>
 <li><code><a title="ambit_stochastics.helpers.input_checks.check_jump_part_and_params" href="#ambit_stochastics.helpers.input_checks.check_jump_part_and_params">check_jump_part_and_params</a></code></li>

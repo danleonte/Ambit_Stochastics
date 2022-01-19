@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>ambit_stochastics.simple_ambit_field API documentation</title>
-<meta name="description" content="" />
+<meta name="description" content="A container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y = L(A_t(x))\)." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -23,11 +23,13 @@
 <h1 class="title">Module <code>ambit_stochastics.simple_ambit_field</code></h1>
 </header>
 <section id="section-intro">
+<p>A container class for the simulation, parameter inference and forecasting of ambit fields of the form <span><span class="MathJax_Preview">Y = L(A_t(x))</span><script type="math/tex">Y = L(A_t(x))</script></span>.</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">###################################################################
+<pre><code class="python">&#34;&#34;&#34;A container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y = L(A_t(x))\).&#34;&#34;&#34;
+###################################################################
 #imports 
 from collections     import Counter
 from itertools       import chain
@@ -51,8 +53,7 @@ class simple_ambit_field:
     def __init__(self, x, tau, k_s, k_t, nr_simulations, ambit_function=None, decorrelation_time=-np.inf,
                  gaussian_part_params=None, jump_part_name=None, jump_part_params=None,
                  batch_size=None, total_nr_samples=None, values=None):
-        &#34;&#34;&#34;Container class for the simulation, parameter inference and forecasting of ambit fields of the
-        form \(Y_t(x) = L(A+(x,t))\).
+        &#34;&#34;&#34;Container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y_t(x) = L(A+(x,t))\).
         
         Args:
           x: positive number: spacing between ambit sets on the space axis.
@@ -60,18 +61,14 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function
-          \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(1) &gt; 0, \phi(t) =0\) for \(t&gt;0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 1, \phi(t) =0\) for \(t&gt;0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
-          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler`
-          for the parametrisation.
+          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
           jump_part_params: string: name of the jump part distribution. check `helpers.sampler` for the parametrisation.
-          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method,
-          in order to optimise for cache memory.
+          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method, in order to optimise for cache memory.
           total_nr_samples: positive integer: total number of points to be used in the `approximate_slices` method.
-          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or 
-          simulated with the method `simple_ambit_field.simulate`.
+          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or simulated with the method `simple_ambit_field.simulate`.
         &#34;&#34;&#34;
 
         #################################################################################
@@ -405,8 +402,7 @@ class simple_ambit_field:
 <span>(</span><span>x, tau, k_s, k_t, nr_simulations, ambit_function=None, decorrelation_time=-inf, gaussian_part_params=None, jump_part_name=None, jump_part_params=None, batch_size=None, total_nr_samples=None, values=None)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Container class for the simulation, parameter inference and forecasting of ambit fields of the
-form <span><span class="MathJax_Preview">Y_t(x) = L(A+(x,t))</span><script type="math/tex">Y_t(x) = L(A+(x,t))</script></span>.</p>
+<div class="desc"><p>Container class for the simulation, parameter inference and forecasting of ambit fields of the form <span><span class="MathJax_Preview">Y_t(x) = L(A+(x,t))</span><script type="math/tex">Y_t(x) = L(A+(x,t))</script></span>.</p>
 <h2 id="args">Args</h2>
 <dl>
 <dt><strong><code>x</code></strong></dt>
@@ -420,27 +416,23 @@ form <span><span class="MathJax_Preview">Y_t(x) = L(A+(x,t))</span><script type=
 <dt><strong><code>nr_simulation</code></strong></dt>
 <dd>positive integer: number of simulations.</dd>
 <dt><strong><code>ambit_function</code></strong></dt>
-<dd>a non-negative, continuous, strictly increasing function</dd>
-<dt><span><span class="MathJax_Preview">\phi \colon (-\infty,0] \to [0,\infty)</span><script type="math/tex">\phi \colon (-\infty,0] \to [0,\infty)</script></span> with <span><span class="MathJax_Preview">\phi(1) &gt; 0, \phi(t) =0</span><script type="math/tex">\phi(1) > 0, \phi(t) =0</script></span> for <span><span class="MathJax_Preview">t&gt;0</span><script type="math/tex">t>0</script></span>.</dt>
+<dd>a non-negative, continuous, strictly increasing function <span><span class="MathJax_Preview">\phi \colon (-\infty,0] \to [0,\infty)</span><script type="math/tex">\phi \colon (-\infty,0] \to [0,\infty)</script></span> with <span><span class="MathJax_Preview">\phi(0) &gt; 1, \phi(t) =0</span><script type="math/tex">\phi(0) > 1, \phi(t) =0</script></span> for <span><span class="MathJax_Preview">t&gt;0</span><script type="math/tex">t>0</script></span>.</dd>
 <dt><strong><code>decorrelation_time</code></strong></dt>
 <dd><span><span class="MathJax_Preview">-\infty</span><script type="math/tex">-\infty</script></span> if the ambit set A is unbounded and finite, negative otherwise.</dd>
 <dt><strong><code>gaussian_part_params</code></strong></dt>
 <dd>tuple with the mean and standard deviation of the Gaussian part.
 </dd>
 <dt><strong><code>jump_part_name</code></strong></dt>
-<dd>tuple with the parameters of the jump part distribution check <code>helpers.sampler</code></dd>
-<dt>for the parametrisation.</dt>
+<dd>tuple with the parameters of the jump part distribution check <code>helpers.sampler</code> for the parametrisation.</dd>
 <dt><strong><code>jump_part_params</code></strong></dt>
 <dd>string: name of the jump part distribution. check <code>helpers.sampler</code> for the parametrisation.</dd>
 <dt><strong><code>batch_size</code></strong></dt>
-<dd>positive integer: number of points to be used at once in the <code>approximate_slices</code> method,</dd>
-<dt>in order to optimise for cache memory.</dt>
+<dd>positive integer: number of points to be used at once in the <code>approximate_slices</code> method, in order to optimise for cache memory.</dd>
 <dt><strong><code>total_nr_samples</code></strong></dt>
 <dd>positive integer: total number of points to be used in the <code>approximate_slices</code> method.</dd>
 <dt><strong><code>values</code></strong></dt>
-<dd>a numpy array with shape <span><span class="MathJax_Preview">[\text{nr_simulations},k_s,k_t]</span><script type="math/tex">[\text{nr_simulations},k_s,k_t]</script></span> which is passed by the user or </dd>
-</dl>
-<p>simulated with the method <code><a title="ambit_stochastics.simple_ambit_field.simple_ambit_field.simulate" href="#ambit_stochastics.simple_ambit_field.simple_ambit_field.simulate">simple_ambit_field.simulate()</a></code>.</p></div>
+<dd>a numpy array with shape <span><span class="MathJax_Preview">[\text{nr_simulations},k_s,k_t]</span><script type="math/tex">[\text{nr_simulations},k_s,k_t]</script></span> which is passed by the user or simulated with the method <code><a title="ambit_stochastics.simple_ambit_field.simple_ambit_field.simulate" href="#ambit_stochastics.simple_ambit_field.simple_ambit_field.simulate">simple_ambit_field.simulate()</a></code>.</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -449,8 +441,7 @@ form <span><span class="MathJax_Preview">Y_t(x) = L(A+(x,t))</span><script type=
     def __init__(self, x, tau, k_s, k_t, nr_simulations, ambit_function=None, decorrelation_time=-np.inf,
                  gaussian_part_params=None, jump_part_name=None, jump_part_params=None,
                  batch_size=None, total_nr_samples=None, values=None):
-        &#34;&#34;&#34;Container class for the simulation, parameter inference and forecasting of ambit fields of the
-        form \(Y_t(x) = L(A+(x,t))\).
+        &#34;&#34;&#34;Container class for the simulation, parameter inference and forecasting of ambit fields of the form \(Y_t(x) = L(A+(x,t))\).
         
         Args:
           x: positive number: spacing between ambit sets on the space axis.
@@ -458,18 +449,14 @@ form <span><span class="MathJax_Preview">Y_t(x) = L(A+(x,t))</span><script type=
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function
-          \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(1) &gt; 0, \phi(t) =0\) for \(t&gt;0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 1, \phi(t) =0\) for \(t&gt;0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
-          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler`
-          for the parametrisation.
+          jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
           jump_part_params: string: name of the jump part distribution. check `helpers.sampler` for the parametrisation.
-          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method,
-          in order to optimise for cache memory.
+          batch_size: positive integer: number of points to be used at once in the `approximate_slices` method, in order to optimise for cache memory.
           total_nr_samples: positive integer: total number of points to be used in the `approximate_slices` method.
-          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or 
-          simulated with the method `simple_ambit_field.simulate`.
+          values: a numpy array with shape \([\\text{nr_simulations},k_s,k_t]\) which is passed by the user or simulated with the method `simple_ambit_field.simulate`.
         &#34;&#34;&#34;
 
         #################################################################################
