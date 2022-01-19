@@ -1,0 +1,9 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Leonte"
+  given-names: "Dan"
+title: "Ambit_Stochastics"
+version: 1.0.2
+date-released: 18/01/2022
+url: "https://github.com/danleonte/Ambit_Stochastics"
