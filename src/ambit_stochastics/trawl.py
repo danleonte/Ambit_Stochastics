@@ -15,12 +15,18 @@ from .helpers.input_checks  import check_jump_part_and_params
 from .helpers.input_checks  import check_gaussian_params
 
  
-from .helpers.sampler       import gaussian_part_sampler 
-from .helpers.sampler       import jump_part_sampler
-from .helpers.sampler       import generate_cpp_points
+from .helpers.sampler                            import gaussian_part_sampler 
+from .helpers.sampler                            import jump_part_sampler
+from .helpers.sampler                            import generate_cpp_points
+from .helpers.acf_functions                      import fit_trawl_envelope_gmm
+from .helpers.marginal_distribution_functions    import fit_trawl_marginal
 #from .heleprs.sampler     import generate_cpp_values_associated_to_points
 
 from .helpers.alternative_convolution_implementation import cumulative_and_diagonal_sums
+
+from .helpers.forecasting_helpers import deterministic_forecasting
+from .helpers.forecasting_helpers import probabilistic_forecasting
+
 
 #from scipy.optimize import minimize
 #from statsmodels.tsa.stattools import acf
@@ -141,7 +147,14 @@ class trawl:
         if values != None:
             self.nr_simulations, self.nr_tralws = self.values.shape
             
-        
+             
+        #############################################################################     
+        ### attributes required only for the parameter inference ###  
+        self.infered_parameters_gmm   = dict()
+        self.infered_parameters_cl    = dict()
+        # {'envelope: exponential, levy_seed: gamma', max_lags : 5, 'params' : 
+        #    {'envelope_params': tuple of tuples , levy_seed_params': tuple of tuples}}
+        # maybe add some cl terms as well
         
     ######################################################################
     ###  Simulation algorithms:      I slice, II grid, III cpp         ###
@@ -288,8 +301,18 @@ class trawl:
         for simulation_nr in range(self.nr_simulations):
             
             gaussian_slices = gaussian_part_sampler(self.gaussian_part_params,self.slice_areas_matrix) 
-            jump_slices     = jump_part_sampler(self.jump_part_params,self.slice_areas_matrix,self.jump_part_name)
             
+            #the lower triangular part of the matrix is made oup of 0's, which can result in an error
+            #in the scipy.stats sampler (for example, if the levy seed is gamma)
+            #to prevent this, we extract the upper triangular part of the matrix as a vector
+            #sample this way, then recast the samples as an upper triangular matrix
+            slice_areas_row   = (np.fliplr(self.slice_areas_matrix))[np.triu_indices(self.slice_areas_matrix.shape[0], k = 0)]
+            jump_slices_row   = jump_part_sampler(self.jump_part_params,slice_areas_row,self.jump_part_name)
+            jump_slices       = np.zeros(gaussian_slices.shape)
+            jump_slices[np.triu_indices(jump_slices.shape[0], k = 0)]     = jump_slices_row
+            jump_slices       = np.fliplr(jump_slices)
+             
+
             if slice_convolution_type == 'fft':
                 gaussian_slices = np.concatenate([zero_matrix,gaussian_slices],axis=1)
                 jump_slices     = np.concatenate([zero_matrix,jump_slices],axis=1)
@@ -302,7 +325,6 @@ class trawl:
                 self.gaussian_values[simulation_nr,:] = cumulative_and_diagonal_sums(gaussian_slices)
                 self.jump_values[simulation_nr,:] =  cumulative_and_diagonal_sums(jump_slices)
         
-        raise ValueError('not yet implemented')    
         
     def simulate_slice(self,slice_convolution_type):
         """implements algorithm [] from [] and simulates teh trawl process at 
@@ -491,3 +513,125 @@ class trawl:
                   
 
              
+    ######################################################################
+    ###  Forecasting:      determinstic and probabilistic              ###
+    ######################################################################
+    
+    
+    def fit_gmm(self,input_values,envelope,levy_seed,max_lag,initial_guess=None):
+        
+        assert len(input_values.shape) == 2
+        lags = tuple(range(1,max_lag+1))
+        envelope_params  = fit_trawl_envelope_gmm(self.tau,input_values,lags,envelope,initial_guess)
+        levy_seed_params = fit_trawl_marginal(input_values,levy_seed)
+        # {'envelope: exponential, levy_seed: gamma', max_lags : 5, 'params' : 
+        #    {'envelope_params': tuple of tuples , levy_seed_params': tuple of tuples}}
+        params_to_add =  {'envelope_params':envelope_params,'levy_seed_params': levy_seed_params}
+        key_to_add  = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag}'
+        self.infered_parameters_gmm[key_to_add] = params_to_add
+    
+    def fit_cl(self,input_values,envelope,levy_seed,max_lag,initial_guess=None):
+        pass
+    
+    
+    def predict(self,input_values, steps_ahead, deterministic, fitting_method, envelope, levy_seed, max_lag, nr_samples = None):
+        #input_values must be a 2 dimensional array
+        #key  = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag},params:{params}'
+        #params_dict = self.infered_parameters_gmm[key]
+        
+        assert isinstance(input_values,np.ndarray) and len(input_values.shape) == 2
+        assert fitting_method in ['gmm','cl']
+        assert deterministic  in [True,False]
+        
+        
+        ##get the fitted parameters for teh envelope and for the levy seed from the attribute self.infered_parameters_gmm
+        key = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag}'
+
+        if fitting_method == 'gmm':
+            d__ = self.infered_parameters_gmm[key]
+            
+        elif fitting_method == 'cl':
+            d__ = self.infered_parameters_cl[key]
+
+
+        envelope_params, levy_seed_params = d__['envelope_params'],d__['levy_seed_params']
+        nr_simulations, simulation_length = input_values.shape                                       
+        d={}
+        
+        for nr_steps_ahead in steps_ahead:
+            
+          if deterministic == True:
+              
+              array_to_add = np.zeros([nr_simulations,simulation_length - max_lag * (levy_seed == 'gaussian')])
+              
+          elif deterministic == False:
+              
+              array_to_add = np.zeros([nr_simulations, simulation_length - max_lag *(levy_seed == 'gaussian'),
+                                       nr_samples])
+
+          for i in range(nr_simulations):
+              
+              if deterministic == True: 
+                  array_to_add[i] = deterministic_forecasting(tau = self.tau, nr_steps_ahead =  nr_steps_ahead ,
+                                    values = input_values[i], levy_seed = levy_seed, levy_seed_params = levy_seed_params[i],
+                                    envelope = envelope, envelope_params = envelope_params[i], 
+                                    envelope_function = None, gaussian_lags = max_lag)
+                        
+              elif deterministic == False:
+                  array_to_add[i] = probabilistic_forecasting(tau = self.tau, nr_steps_ahead = nr_steps_ahead, values = input_values[i],
+                                    levy_seed = levy_seed, levy_seed_params = levy_seed_params[i],
+                                    envelope = envelope, envelope_params = envelope_params[i], nr_samples =  nr_samples,
+                                    envelope_function = None, gaussian_lags = max_lag)
+          
+          d[nr_steps_ahead] =  array_to_add       
+                  
+        return d
+                    
+                    
+            
+            #if type_ == 'deterministic':
+            #    deterministic_forecasting(tau_ahead,values,levy_seed,levy_seed_params,envelope,
+             #                                     envelope_params, nr_samples, envelope_function = None)
+            
+            #elif type__ == 'probabilistic':
+            #    pass
+    
+    def fit_predict(self,steps_ahead,deterministic,fitting_method,envelope,levy_seed,max_lag,initial_training_window,refit,refit_freq=None,initial_guess = None, nr_samples=None):
+        assert all(isinstance(x, int) and x >0 for x in steps_ahead)
+        assert refit in [True,False] and deterministic in [True,False]
+        assert fitting_method in ['gmm','cl']
+        if refit == True:
+            assert refit_freq >0 and isinstance(refit_freq,int)
+            
+        assert isinstance(max_lag,int) and max_lag > 0
+        assert isinstance(initial_training_window,int) and  initial_training_window > 0  
+        if deterministic == False:
+            assert isinstance(nr_samples,int) and nr_samples > 0
+
+            
+        if fitting_method == 'gmm':
+            self.fit_gmm(self.values[:,:initial_training_window],envelope,levy_seed,max_lag,initial_guess)
+        
+        elif fitting_method == 'cl':
+            self.fit_cl(self.values[:,:initial_training_window],envelope,levy_seed,max_lag,initial_guess)
+                
+            
+        if refit == False:   
+            
+            return self.predict(input_values = self.values[:,initial_training_window:], steps_ahead = steps_ahead,
+                             deterministic = deterministic, fitting_method = fitting_method,
+                             envelope = envelope, levy_seed = levy_seed, max_lag = max_lag, nr_samples = nr_samples)
+            
+        elif refit == True:
+            
+            raise ValueError('not yet implemented')
+            
+            
+            
+            
+            
+         
+            
+            
+            
+

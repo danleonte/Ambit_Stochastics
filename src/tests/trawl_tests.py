@@ -10,6 +10,8 @@ from scipy.integrate import quad
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\
                             geninvgauss,poisson 
+                            
+from ambit_stochastics.trawl import trawl                            
 
 #from fit_distr_for_tests import fit_trawl_distribution_aux 
 #from ambit_stochastics import trawl
@@ -49,7 +51,7 @@ def check_acf(trawl_, simulation_to_use=0, lags=20):
         ax_acf.scatter(x,y.values(),marker = "*", color = 'r',s = 300,alpha = 0.5,label='theoretical')
         ax_acf.legend()
     
-def check_trawl_slice(trawl_):
+def check_trawl_slice(trawl_slice):
         check_values(trawl_slice)
         check_acf(trawl_slice,simulation_to_use = 1,lags=20)
         check_acf(trawl_slice,simulation_to_use = 7,lags=20)
@@ -75,8 +77,8 @@ def check_trawl_jump_part_distribution(trawl_):
     total_area = quad(trawl_.trawl_function,a=-np.inf,b=0)[0]
     
     if trawl_.jump_part_name == 'gamma':
-        a = [gamma.fit(data = simulation,floc=0,method=method) for simulation in values]
-        a = np.array([[i[0],i[2]] for i in params])   #a, scale
+        a = [gamma.fit(data = simulation,floc=0) for simulation in trawl_.jump_values]
+        a = np.array([[i[0],i[2]] for i in a])   #a, scale
         a = a / np.array([total_area,1])
         
         f,ax= plt.subplots(1,2,sharey=True, tight_layout=True)
@@ -100,16 +102,18 @@ def check_trawl_jump_part_distribution(trawl_):
     
 if __name__ == "__main__":
     tau = 0.15
-    nr_trawls = 5000 
-    nr_simulations = 100
-    trawl_function= lambda x :  (x> -2) * (x<=0) * (2 - (-x) **2/2) 
-    decorrelation_time =-2
+    nr_trawls = 1000 
+    nr_simulations = 50
+    trawl_function = lambda x :   2*(1-x)**(-3) * (x<=0)
+    #trawl_function= lambda x :  (x> -2) * (x<=0) * (2 - (-x) **2/2) 
+    #decorrelation_time =-2
     gaussian_part_params = (-3,7)
     jump_part_params = (2,3)
     jump_part_name   = 'gamma'
-    mesh_size = 0.05
-    truncation_grid = -2
-    times_grid =  tau * np.arange(1,nr_trawls+1,1) #important to keep it this way
+    decorrelation_time = -np.inf
+    #mesh_size = 0.05
+    #truncation_grid = -2
+    #times_grid =  tau * np.arange(1,nr_trawls+1,1) #important to keep it this way
     
     trawl_slice = trawl(nr_trawls = nr_trawls, nr_simulations = nr_simulations,
                    trawl_function = trawl_function,tau =  tau,decorrelation_time =  decorrelation_time, 
@@ -119,17 +123,22 @@ if __name__ == "__main__":
 
     
 
-    trawl_grid  = trawl(nr_trawls = nr_trawls, nr_simulations = nr_simulations,
-                   trawl_function = trawl_function,times_grid=times_grid,
-                   mesh_size = mesh_size,truncation_grid = truncation_grid,
-                   gaussian_part_params = gaussian_part_params,
-                   jump_part_name =  jump_part_name,jump_part_params = jump_part_params )
+    #trawl_grid  = trawl(nr_trawls = nr_trawls, nr_simulations = nr_simulations,
+    #               trawl_function = trawl_function,times_grid=times_grid,
+    #               mesh_size = mesh_size,truncation_grid = truncation_grid,
+    #               gaussian_part_params = gaussian_part_params,
+    #               jump_part_name =  jump_part_name,jump_part_params = jump_part_params )
     
-    trawl_slice.simulate(method='slice',slice_convolution_type='fft')
-    trawl_grid.simulate(method='grid')
+    print('started')
+    trawl_slice.simulate(method='slice')
+    print('finished')
+    #trawl_grid.simulate(method='grid')
     
-    #check_trawl(trawl_slice)
+    check_trawl_slice(trawl_slice)
     #check_trawl(trawl_grid)
     check_trawl_gaussian_part(trawl_slice)
     check_trawl_jump_part_distribution(trawl_slice)
-    check_trawl_jump_part_distribution(trawl_grid)
+    #check_trawl_jump_part_distribution(trawl_grid)
+    
+    
+    
