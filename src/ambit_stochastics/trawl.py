@@ -152,7 +152,7 @@ class trawl:
         ### attributes required only for the parameter inference ###  
         self.infered_parameters_gmm   = dict()
         self.infered_parameters_cl    = dict()
-        # {'envelope: exponential, levy_seed: gamma', max_lags : 5, 'params' : 
+        # {'envelope: exponential, levy_seed: gamma', lags : (1,3,5,7), 'params' : 
         #    {'envelope_params': tuple of tuples , levy_seed_params': tuple of tuples}}
         # maybe add some cl terms as well
         
@@ -518,34 +518,35 @@ class trawl:
     ######################################################################
     
     
-    def fit_gmm(self,input_values,envelope,levy_seed,max_lag,initial_guess=None):
+    def fit_gmm(self,input_values,envelope,levy_seed,lags,initial_guess=None):
         
         assert len(input_values.shape) == 2
-        lags = tuple(range(1,max_lag+1))
+        assert isinstance(lags,tuple)
+        
         envelope_params  = fit_trawl_envelope_gmm(self.tau,input_values,lags,envelope,initial_guess)
         levy_seed_params = fit_trawl_marginal(input_values,levy_seed)
-        # {'envelope: exponential, levy_seed: gamma', max_lags : 5, 'params' : 
+        # {'envelope: exponential, levy_seed: gamma', lags : (1,2,3), 'params' : 
         #    {'envelope_params': tuple of tuples , levy_seed_params': tuple of tuples}}
         params_to_add =  {'envelope_params':envelope_params,'levy_seed_params': levy_seed_params}
-        key_to_add  = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag}'
+        key_to_add  = f'envelope:{envelope},levy_seed:{levy_seed},lags:{lags}'
         self.infered_parameters_gmm[key_to_add] = params_to_add
     
     def fit_cl(self,input_values,envelope,levy_seed,max_lag,initial_guess=None):
         pass
     
     
-    def predict(self,input_values, steps_ahead, deterministic, fitting_method, envelope, levy_seed, max_lag, nr_samples = None):
+    def predict(self,input_values, steps_ahead, deterministic, fitting_method, envelope, levy_seed, lags, nr_samples = None):
         #input_values must be a 2 dimensional array
-        #key  = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag},params:{params}'
+        #key  = f'envelope:{envelope},levy_seed:{levy_seed},lags:{lags},params:{params}'
         #params_dict = self.infered_parameters_gmm[key]
         
         assert isinstance(input_values,np.ndarray) and len(input_values.shape) == 2
         assert fitting_method in ['gmm','cl']
         assert deterministic  in [True,False]
-        
+        assert isinstance(lags,tuple)
         
         ##get the fitted parameters for teh envelope and for the levy seed from the attribute self.infered_parameters_gmm
-        key = f'envelope:{envelope},levy_seed:{levy_seed},max_lag:{max_lag}'
+        key = f'envelope:{envelope},levy_seed:{levy_seed},lags:{lags}'
 
         if fitting_method == 'gmm':
             d__ = self.infered_parameters_gmm[key]
@@ -562,11 +563,11 @@ class trawl:
             
           if deterministic == True:
               
-              array_to_add = np.zeros([nr_simulations,simulation_length - max_lag * (levy_seed == 'gaussian')])
+              array_to_add = np.zeros([nr_simulations,simulation_length - max(lags) * (levy_seed == 'gaussian')])
               
           elif deterministic == False:
               
-              array_to_add = np.zeros([nr_simulations, simulation_length - max_lag *(levy_seed == 'gaussian'),
+              array_to_add = np.zeros([nr_simulations, simulation_length - max(lags) *(levy_seed == 'gaussian'),
                                        nr_samples])
 
           for i in range(nr_simulations):
@@ -575,13 +576,13 @@ class trawl:
                   array_to_add[i] = deterministic_forecasting(tau = self.tau, nr_steps_ahead =  nr_steps_ahead ,
                                     values = input_values[i], levy_seed = levy_seed, levy_seed_params = levy_seed_params[i],
                                     envelope = envelope, envelope_params = envelope_params[i], 
-                                    envelope_function = None, gaussian_lags = max_lag)
+                                    envelope_function = None, gaussian_lags = max(lags))
                         
               elif deterministic == False:
                   array_to_add[i] = probabilistic_forecasting(tau = self.tau, nr_steps_ahead = nr_steps_ahead, values = input_values[i],
                                     levy_seed = levy_seed, levy_seed_params = levy_seed_params[i],
                                     envelope = envelope, envelope_params = envelope_params[i], nr_samples =  nr_samples,
-                                    envelope_function = None, gaussian_lags = max_lag)
+                                    envelope_function = None, gaussian_lags = max(lags))
           
           d[nr_steps_ahead] =  array_to_add       
                   
@@ -596,31 +597,31 @@ class trawl:
             #elif type__ == 'probabilistic':
             #    pass
     
-    def fit_predict(self,steps_ahead,deterministic,fitting_method,envelope,levy_seed,max_lag,initial_training_window,refit,refit_freq=None,initial_guess = None, nr_samples=None):
+    def fit_predict(self,steps_ahead,deterministic,fitting_method,envelope,levy_seed,lags,initial_training_window,refit,refit_freq=None,initial_guess = None, nr_samples=None):
         assert all(isinstance(x, int) and x >0 for x in steps_ahead)
         assert refit in [True,False] and deterministic in [True,False]
         assert fitting_method in ['gmm','cl']
         if refit == True:
             assert refit_freq >0 and isinstance(refit_freq,int)
             
-        assert isinstance(max_lag,int) and max_lag > 0
+        assert isinstance(lags,tuple)  and all(isinstance(i,int) for i in lags)
         assert isinstance(initial_training_window,int) and  initial_training_window > 0  
         if deterministic == False:
             assert isinstance(nr_samples,int) and nr_samples > 0
 
             
         if fitting_method == 'gmm':
-            self.fit_gmm(self.values[:,:initial_training_window],envelope,levy_seed,max_lag,initial_guess)
+            self.fit_gmm(self.values[:,:initial_training_window],envelope,levy_seed,lags,initial_guess)
         
         elif fitting_method == 'cl':
-            self.fit_cl(self.values[:,:initial_training_window],envelope,levy_seed,max_lag,initial_guess)
+            self.fit_cl(self.values[:,:initial_training_window],envelope,levy_seed,lags,initial_guess)
                 
             
         if refit == False:   
             
             return self.predict(input_values = self.values[:,initial_training_window:], steps_ahead = steps_ahead,
                              deterministic = deterministic, fitting_method = fitting_method,
-                             envelope = envelope, levy_seed = levy_seed, max_lag = max_lag, nr_samples = nr_samples)
+                             envelope = envelope, levy_seed = levy_seed, lags = lags, nr_samples = nr_samples)
             
         elif refit == True:
             

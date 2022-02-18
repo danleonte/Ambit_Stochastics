@@ -33,7 +33,13 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
     Returns:
       A number / numpy array with law specified by params and distr_name
     """
-
+    areas_copy = areas.copy()
+    index      = areas_copy == 0
+    if any(areas_copy < 0):
+        raise ValueError('slice areas cant be negative')
+    
+    areas[index] = 100 #random number which will be removed
+    
     if distr_name == None:
         samples = np.zeros(shape= areas.shape)
     
@@ -56,6 +62,7 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         lambda_poisson = jump_part_params[0]
         samples = poisson.rvs(mu = lambda_poisson * areas,loc=0)     
     
+    samples[index] = 0
     return samples 
 
 def generate_cpp_values_associated_to_points(nr_points,cpp_part_name,cpp_part_params,custom_sampler):  

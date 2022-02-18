@@ -16,7 +16,7 @@ def corr_matrix_from_corr_vector(corr_vector):
     corr_matrix = [corr_vector[1:i+1][::-1] + corr_vector[:k-i] for i in range(k)]
     return np.array(corr_matrix)
 
-#in the following correlation functions corr_exponnetial,corr_gama,corr_supig      h > 0
+#in the following correlation functions corr_exponnetial,corr_gama,corr_ig      h > 0
 def corr_exponential_envelope(h,params):
      u = params[0]
      return np.exp(-u * h)
@@ -25,11 +25,12 @@ def corr_gamma_envelope(h,params):
     H,delta = params
     return (1+h/delta)**(-H)
 
-def corr_supig_envelope(h,params):
-    raise TypeError('not yet implemented')
+def corr_ig_envelope(h,params):
+    gamma,delta =  params
+    return np.exp(delta * gamma *(1-np.sqrt(2*h/gamma**2+1)))
 
 def trawl_acf(envelope, envelope_function=None):
-    assert envelope in ['exponential','gamma','supig','custom'],'please check the value of envelope'
+    assert envelope in ['exponential','gamma','ig','custom'],'please check the value of envelope'
     
     if envelope == "custom":
         """describe how to specify envelope_function"""
@@ -50,23 +51,21 @@ def trawl_acf(envelope, envelope_function=None):
         if envelope == "gamma":
             return corr_gamma_envelope
 
-        if envelope == "supig":
-            return corr_supig_envelope
+        if envelope == "ig":
+            return corr_ig_envelope
 
 
 def bounds_and_initial_guess_for_acf_params(envelope):
-    assert envelope in ['exponential','gamma','supig']
+    assert envelope in ['exponential','gamma','ig']
     
     if envelope == 'exponential':
         bounds = ((0,np.inf),)
         initial_guess = (1,)
         
-    if envelope  == 'gamma':
+    elif envelope  == 'gamma' or envelope == 'ig':
         bounds = ((0.0001,np.inf),(0.0001,np.inf))
         initial_guess = (1,1)
     
-    if envelope  == 'supig':
-        raise ValueError('not yet implemented')
     
     return bounds,initial_guess
 
@@ -78,7 +77,7 @@ def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
     #parameter checks
     assert isinstance(s,(float,int))
     assert isinstance(lags,tuple)
-    assert envelope in ['exponential','gamma','supig','custom']
+    assert envelope in ['exponential','gamma','ig','custom']
     assert len(simulations.shape) == 2
     #assert isinstance(envelope_params,tuple)
     
