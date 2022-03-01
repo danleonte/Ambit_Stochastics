@@ -81,7 +81,7 @@ def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
     assert len(simulations.shape) == 2
     #assert isinstance(envelope_params,tuple)
     
-    assert isinstance(initial_guess,tuple) or initial_guess     == None
+    assert (isinstance(initial_guess,tuple) and all(isinstance(i,tuple) for i in initial_guess)) or initial_guess     == None
     assert isinstance(bounds,tuple)        or bounds            == None
     assert callable(envelope_function)     or envelope_function == None 
 
@@ -103,7 +103,7 @@ def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
     if envelope != 'custom':
         bounds,_ = bounds_and_initial_guess_for_acf_params(envelope)
         if initial_guess  == None:
-            initial_guess = _
+            initial_guess = tuple([_ for index_ in range(len(empirical_acf))])
     
     #if the custom function has no bounds
     #if bounds == None:
@@ -112,7 +112,7 @@ def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
     #    
     #in all the other cases, we have bounds    
     #else:
-    result = [minimize(criterion,x0 = initial_guess, args= (empirical_acf_row,),
-                       method='L-BFGS-B', bounds = bounds).x for empirical_acf_row in empirical_acf]
+    result = [minimize(criterion,x0 = initial_guess[j], args= (empirical_acf[j],),
+                       method='L-BFGS-B', bounds = bounds).x for j in range(len(empirical_acf))]
         
     return np.array(result)
