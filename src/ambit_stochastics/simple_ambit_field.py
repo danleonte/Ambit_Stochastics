@@ -31,7 +31,7 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) > 1, \phi(t) =0\) for \(t>0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) > 0, \phi(t) =0\) for \(t>0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
           jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
@@ -208,7 +208,8 @@ class simple_ambit_field:
         # to add more diagnostics
         print('Slice estimation procedure has finished')
         end_time = time.time()
-        print(end_time - start_time)
+        print('elapsed minutes for the slice estimation procedure: ',
+              round((end_time - start_time)/60,2))
         
         percentage_points_kept = 100 * sum(dict_.values()) / self.total_nr_samples
         print(f"{round(percentage_points_kept,2)}% of points are used in the slice estimation")
@@ -240,8 +241,8 @@ class simple_ambit_field:
         for k in range(self.k_s + self.I_s -1):
             for l in range(self.k_t + self.I_t - 1):
                 
-                gaussian_to_add = np.zeros((self.k_s,self.k_t))
-                jump_to_add     = np.zeros((self.k_s,self.k_t))
+                gaussian_to_add = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+                jump_to_add     = np.zeros((self.nr_simulations,self.I_s,self.I_t))
                 
                 #simulate S.
                 for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
@@ -250,8 +251,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add += slice_S * gaussian_sample_slice[:,:,np.newaxis]
-                    jump_to_add     += slice_S * jump_sample_slice[:,:,np.newaxis]
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis]
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis]
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -298,8 +299,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add = slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                    jump_to_add     = slice_S * jump_sample_slice[:,:,np.newaxis] 
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis] 
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis] 
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -314,12 +315,16 @@ class simple_ambit_field:
         process is given by the independent sum of the Gaussian and jump parts. See [] for an example
         and `helpers.sampler` for the parametrisations used. The simulated values are stored in the
         attribute `values`."""
-
+        
+        start_time = time.time()
+        
         # checks
         self.delete_values()
         check_trawl_function(self.ambit_function)
         check_gaussian_params(self.gaussian_part_params)
         check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+        if self.ambit_function(0) <= self.x :
+            raise ValueError('vertical translations of the ambit sets have no overlap')
 
 
 
@@ -356,3 +361,7 @@ class simple_ambit_field:
 
         
         self.values = self.gaussian_values + self.jump_values
+        
+        end_time = time.time()
+        print('elapsed minutes for the slice estimation procedure: ',
+              round((end_time - start_time)/60,2))

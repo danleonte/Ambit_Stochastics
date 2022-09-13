@@ -7,3 +7,4 @@ import_file >= 1.11
 math >= 3.10.1
 matplotlib >= 3.5.1
 statsmodels >= 0.13.1
+properscoring >= 0.1

@@ -19,20 +19,20 @@ def get_trawl_process_mean(levy_seed,levy_seed_params):
 
          
 
-def conditional_gaussian_distribution(values,tau,nr_steps_ahead,gaussian_lags,levy_seed_params,envelope,envelope_params,envelope_function=None):
+def conditional_gaussian_distribution(values,tau,nr_steps_ahead,max_gaussian_lag,levy_seed_params,envelope,envelope_params,envelope_function=None):
     
     acf_function_helper =  trawl_acf(envelope, envelope_function)
     acf_function        =  lambda t: acf_function_helper(t,envelope_params)
     mu_,scale_ = levy_seed_params
     
-    joints = [np.array(values[i:i+gaussian_lags]) for i in range(0,len(values) - gaussian_lags +1 )]
+    joints = [np.array(values[i:i+max_gaussian_lag]) for i in range(0,len(values) - max_gaussian_lag +1 )]
     
     mu_1 = mu_                             #mean of X_{gaussian_lags + nr_steps_ahead}
-    mu_2 = mu_ *  np.ones(gaussian_lags)   #mean of (X_1,...,X_{gaussian_lags})                     
+    mu_2 = mu_ *  np.ones(max_gaussian_lag)   #mean of (X_1,...,X_{gaussian_lags})                     
     
     sigma_11 =  scale_**2
-    sigma_22 =  scale_**2 * corr_matrix_from_corr_vector(acf_function(np.array([i*tau for i in range(gaussian_lags)])))
-    sigma_21 =  scale_**2 * (acf_function(np.array([i*tau for i in range(nr_steps_ahead, gaussian_lags+nr_steps_ahead)])))[::-1]
+    sigma_22 =  scale_**2 * corr_matrix_from_corr_vector(acf_function(np.array([i*tau for i in range(max_gaussian_lag)])))
+    sigma_21 =  scale_**2 * (acf_function(np.array([i*tau for i in range(nr_steps_ahead, max_gaussian_lag+nr_steps_ahead)])))[::-1]
     sigma_12 =  sigma_21
     
     sigma_22_inv = np.linalg.inv(sigma_22)
@@ -64,13 +64,13 @@ def probabilistic_forecasting_sanity_checks(values,tau,nr_steps_ahead,levy_seed,
     
     
 def deterministic_forecasting(tau, nr_steps_ahead,values,levy_seed,levy_seed_params,envelope,
-                              envelope_params, envelope_function = None,  gaussian_lags = None):
+                              envelope_params, envelope_function = None,  max_gaussian_lag = None):
     
     deterministic_forecasting_sanity_checks(values, tau, nr_steps_ahead, levy_seed,levy_seed_params,envelope_params)
     
     if envelope == 'gaussian':
-        assert isinstance(gaussian_lags,int) and   gaussian_lags > 0
-        conditional_mean,_ = conditional_gaussian_distribution(values,tau,nr_steps_ahead,gaussian_lags,levy_seed_params,envelope,envelope_params,envelope_function=None)
+        assert isinstance(max_gaussian_lag,int) and   max_gaussian_lag > 0
+        conditional_mean,_ = conditional_gaussian_distribution(values,tau,nr_steps_ahead,max_gaussian_lag,levy_seed_params,envelope,envelope_params,envelope_function=None)
         return conditional_mean
         
     else:
@@ -81,7 +81,7 @@ def deterministic_forecasting(tau, nr_steps_ahead,values,levy_seed,levy_seed_par
 
 
 def probabilistic_forecasting(tau,nr_steps_ahead,values,levy_seed,levy_seed_params,envelope,
-                              envelope_params, nr_samples, envelope_function = None, gaussian_lags = None):
+                              envelope_params, nr_samples, envelope_function = None, max_gaussian_lag = None):
     """assumes the area of the lebesgue measure is 1
     values is a 1 dimensional array """
     
@@ -94,9 +94,9 @@ def probabilistic_forecasting(tau,nr_steps_ahead,values,levy_seed,levy_seed_para
 
     if levy_seed == 'gaussian':
         
-        assert isinstance(gaussian_lags,int) and gaussian_lags > 0 
+        assert isinstance(max_gaussian_lag,int) and max_gaussian_lag > 0 
         
-        conditional_mean,conditional_scale = conditional_gaussian_distribution(values,tau,nr_steps_ahead,gaussian_lags,
+        conditional_mean,conditional_scale = conditional_gaussian_distribution(values,tau,nr_steps_ahead,max_gaussian_lag,
                                                                                levy_seed_params,envelope,envelope_params,envelope_function)
         
         return np.array([norm.rvs(loc = i, scale = conditional_scale, size=nr_samples) for i in conditional_mean])
@@ -106,11 +106,15 @@ def probabilistic_forecasting(tau,nr_steps_ahead,values,levy_seed,levy_seed_para
             
             alpha,theta = levy_seed_params
             
+            
+            
             alpha0 = alpha *  overlap_area
             alpha1 = alpha * (1-overlap_area)
-            
+            print('before overlap')
             overlap_samples     = values[:,np.newaxis] * beta.rvs(a = alpha0, b = alpha1, size = [len(values),nr_samples])
+            print('before independent')
             independent_samples = gamma.rvs(a = alpha1, loc = 0, scale = theta, size = nr_samples)[np.newaxis,:]
+            print('after independent')
             
     elif levy_seed in ['invgauss','gig','cauchy','student']:
         raise ValueError('not yet implemented')

@@ -1,48 +1,32 @@
 import numpy as np
-import pandas as pd 
+import properscoring as ps
 
-#check qlike definition
-def qlike_func(forecast,observed):
-    return observed/forecast - np.log(observed/forecast)  - 1
 
-#check the ones below and the forecast as well from trawl ( where we actually do the forecast)
-def loss_func(trawl_values,predicted_values_dict,training_window):
-    #mae - mean absolute error
-    #medae - mean of the median absolute error
-    #rmse - root mean squared error
-    #qlike
-    assert isinstance(predicted_values_dict,dict)
-    assert isinstance(trawl_values,np.ndarray)
+def compute_CRPS_loss(true_values,predicted_values_dict):
+    #predicted_values_dict[h] has shape [nr_simulations,nr_trawls,nr_samples]
     
-    assert len(trawl_values.shape) == 2
-    print('here')
-    mae,medae,rmse,mqlike,nr_steps_ahead = [],[],[],[],[]
+    assert isinstance(predicted_values_dict,dict)
+    assert isinstance(true_values,np.ndarray)
+    assert len(true_values.shape) == 2
+    
+    
+    result_dict = dict()
     
     for h in predicted_values_dict.keys(): 
-        print(predicted_values_dict.keys())
-        true_values = trawl_values[:,training_window + h-1:]
-        print(true_values.shape,predicted_values_dict[h].shape)
-        assert true_values.shape == predicted_values_dict[h].shape
+        array = []
+        for simulation_nr in range(true_values.shape[0]):
         
-        #check what it does
-        #mae
-        mae.append( np.mean(np.abs(true_values - predicted_values_dict[h])) )
-        #mean median error
-        medae.append( np.mean(np.median(np.abs(true_values - predicted_values_dict[h]),axis=1)) )
-        #mse
-        mse_vec = np.mean((true_values - predicted_values_dict[h])**2,axis=1)
-        #check
-        assert len(mse_vec.shape) == 1 and  len(mse_vec) == true_values.shape[0]
-        rmse.append(np.mean(mse_vec**0.5)) 
-        #mean qlike loss
-        mqlike.append(np.mean(qlike_func(predicted_values_dict[h],true_values))) 
-        nr_steps_ahead.append(h)
-    df = pd.DataFrame(np.array([mae,medae,rmse,mqlike,nr_steps_ahead]).T,\
-                      columns = ['mae', 'medae','rmse','mqlike','nr_steps_ahead'])
-    return df
-
-    
-   
-    
+            true_values_to_use      = true_values[simulation_nr,h:]
+            predicted_values_to_use = predicted_values_dict[h][simulation_nr,:-h,:]
+        
+            result = ps.crps_ensemble(observations = true_values_to_use, forecasts = predicted_values_to_use,
+                                  weights=None, issorted=False,  axis=-1)
+        
+            array.append(np.mean(result))
+            
+        result_dict[h] = np.array(array)
+        
+    return result_dict
+        
     
     

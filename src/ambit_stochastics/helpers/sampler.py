@@ -35,7 +35,7 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
     """
     areas_copy = areas.copy()
     index      = areas_copy == 0
-    if any(areas_copy < 0):
+    if np.any(areas_copy < 0):
         raise ValueError('slice areas cant be negative')
     
     areas[index] = 100 #random number which will be removed
@@ -53,10 +53,27 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         samples = cauchy.rvs(loc = 0, scale = scale * areas)
         
     elif distr_name == 'invgauss':
-        #this is a different parametrisation
-        #from the wikipedia page
-        raise ValueError('not implemented')
+
         
+        mu, scale = jump_part_params
+        samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)  
+        
+        #this is a different parametrisation
+        #from the wikipedia pagey
+        #scipy (mu,scale) -> wiki (mu= mu * scale, lambda = scale)
+        #wiki (mu, lambda) -> scipy (mu = mu/lambda, scale = lambda)
+        
+        #        #wrong?
+        #scipy scaling: L' ~ IG(mu,scale) ->  L(A) ~ IG(mu / (scale * Leb(A)) , scale * Leb(A)^2)
+        #correct?
+        #scipy scaling: L' ~ IG(mu,scale) ->  L(A) ~ IG(mu / Leb(A) , scale * Leb(A)^2)
+        
+        #scipy mean = mu * scale, scipy var: (mu * scale )^3 / scale = mu ^3 * scale ^2 
+        #wiki scaling: L' ~ IG(mu,lambda) ->  L(A) ~ IG( mu * Leb(A), lamda * Leb(A)^2)
+        #TO CHECK THIS AGAIN
+        #mu, scale = jump_part_params
+       # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)         
+            
     ###discrete distributions
     elif distr_name == 'poisson':
         lambda_poisson = jump_part_params[0]
