@@ -72,10 +72,10 @@ def check_jump_part_and_params(jump_part_name,jump_part_params):
         assert all(isinstance(i,(int,float)) for i in jump_part_params),&#39;parameters of the jump part are not numbers&#39;
         
         #jump part_name
-        if jump_part_name in [&#39;invgauss&#39;,&#39;norminvgauss&#39;,&#39;geninvgauss&#39;,&#39;nbinom&#39;]: #to also add hyperbolic distributions 
+        if jump_part_name in [&#39;norminvgauss&#39;,&#39;geninvgauss&#39;,&#39;nbinom&#39;]: #to also add hyperbolic distributions 
             raise ValueError(&#39;distribution not yet supported&#39;)
 
-        elif jump_part_name not in [None,&#39;gamma&#39;,&#39;cauchy&#39;,&#39;poisson&#39;]:
+        elif jump_part_name not in [None,&#39;invgauss&#39;,&#39;gamma&#39;,&#39;cauchy&#39;,&#39;poisson&#39;]:
             raise ValueError(&#39;unknown distribution&#39;)
             
 def check_grid_params(mesh_size,truncation_grid,times_grid):
@@ -224,10 +224,10 @@ of the Jump parts are numbers</p></div>
         assert all(isinstance(i,(int,float)) for i in jump_part_params),&#39;parameters of the jump part are not numbers&#39;
         
         #jump part_name
-        if jump_part_name in [&#39;invgauss&#39;,&#39;norminvgauss&#39;,&#39;geninvgauss&#39;,&#39;nbinom&#39;]: #to also add hyperbolic distributions 
+        if jump_part_name in [&#39;norminvgauss&#39;,&#39;geninvgauss&#39;,&#39;nbinom&#39;]: #to also add hyperbolic distributions 
             raise ValueError(&#39;distribution not yet supported&#39;)
 
-        elif jump_part_name not in [None,&#39;gamma&#39;,&#39;cauchy&#39;,&#39;poisson&#39;]:
+        elif jump_part_name not in [None,&#39;invgauss&#39;,&#39;gamma&#39;,&#39;cauchy&#39;,&#39;poisson&#39;]:
             raise ValueError(&#39;unknown distribution&#39;)</code></pre>
 </details>
 </dd>

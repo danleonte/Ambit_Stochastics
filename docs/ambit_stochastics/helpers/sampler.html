@@ -63,7 +63,13 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
     Returns:
       A number / numpy array with law specified by params and distr_name
     &#34;&#34;&#34;
-
+    areas_copy = areas.copy()
+    index      = areas_copy == 0
+    if np.any(areas_copy &lt; 0):
+        raise ValueError(&#39;slice areas cant be negative&#39;)
+    
+    areas[index] = 100 #random number which will be removed
+    
     if distr_name == None:
         samples = np.zeros(shape= areas.shape)
     
@@ -77,15 +83,33 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         samples = cauchy.rvs(loc = 0, scale = scale * areas)
         
     elif distr_name == &#39;invgauss&#39;:
-        #this is a different parametrisation
-        #from the wikipedia page
-        raise ValueError(&#39;not implemented&#39;)
+
         
+        mu, scale = jump_part_params
+        samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)  
+        
+        #this is a different parametrisation
+        #from the wikipedia pagey
+        #scipy (mu,scale) -&gt; wiki (mu= mu * scale, lambda = scale)
+        #wiki (mu, lambda) -&gt; scipy (mu = mu/lambda, scale = lambda)
+        
+        #        #wrong?
+        #scipy scaling: L&#39; ~ IG(mu,scale) -&gt;  L(A) ~ IG(mu / (scale * Leb(A)) , scale * Leb(A)^2)
+        #correct?
+        #scipy scaling: L&#39; ~ IG(mu,scale) -&gt;  L(A) ~ IG(mu / Leb(A) , scale * Leb(A)^2)
+        
+        #scipy mean = mu * scale, scipy var: (mu * scale )^3 / scale = mu ^3 * scale ^2 
+        #wiki scaling: L&#39; ~ IG(mu,lambda) -&gt;  L(A) ~ IG( mu * Leb(A), lamda * Leb(A)^2)
+        #TO CHECK THIS AGAIN
+        #mu, scale = jump_part_params
+       # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)         
+            
     ###discrete distributions
     elif distr_name == &#39;poisson&#39;:
         lambda_poisson = jump_part_params[0]
         samples = poisson.rvs(mu = lambda_poisson * areas,loc=0)     
     
+    samples[index] = 0
     return samples 
 
 def generate_cpp_values_associated_to_points(nr_points,cpp_part_name,cpp_part_params,custom_sampler):  
@@ -267,7 +291,13 @@ and parametrised as in <a href="https://docs.scipy.org/doc/scipy/reference/stats
     Returns:
       A number / numpy array with law specified by params and distr_name
     &#34;&#34;&#34;
-
+    areas_copy = areas.copy()
+    index      = areas_copy == 0
+    if np.any(areas_copy &lt; 0):
+        raise ValueError(&#39;slice areas cant be negative&#39;)
+    
+    areas[index] = 100 #random number which will be removed
+    
     if distr_name == None:
         samples = np.zeros(shape= areas.shape)
     
@@ -281,15 +311,33 @@ and parametrised as in <a href="https://docs.scipy.org/doc/scipy/reference/stats
         samples = cauchy.rvs(loc = 0, scale = scale * areas)
         
     elif distr_name == &#39;invgauss&#39;:
-        #this is a different parametrisation
-        #from the wikipedia page
-        raise ValueError(&#39;not implemented&#39;)
+
         
+        mu, scale = jump_part_params
+        samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)  
+        
+        #this is a different parametrisation
+        #from the wikipedia pagey
+        #scipy (mu,scale) -&gt; wiki (mu= mu * scale, lambda = scale)
+        #wiki (mu, lambda) -&gt; scipy (mu = mu/lambda, scale = lambda)
+        
+        #        #wrong?
+        #scipy scaling: L&#39; ~ IG(mu,scale) -&gt;  L(A) ~ IG(mu / (scale * Leb(A)) , scale * Leb(A)^2)
+        #correct?
+        #scipy scaling: L&#39; ~ IG(mu,scale) -&gt;  L(A) ~ IG(mu / Leb(A) , scale * Leb(A)^2)
+        
+        #scipy mean = mu * scale, scipy var: (mu * scale )^3 / scale = mu ^3 * scale ^2 
+        #wiki scaling: L&#39; ~ IG(mu,lambda) -&gt;  L(A) ~ IG( mu * Leb(A), lamda * Leb(A)^2)
+        #TO CHECK THIS AGAIN
+        #mu, scale = jump_part_params
+       # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)         
+            
     ###discrete distributions
     elif distr_name == &#39;poisson&#39;:
         lambda_poisson = jump_part_params[0]
         samples = poisson.rvs(mu = lambda_poisson * areas,loc=0)     
     
+    samples[index] = 0
     return samples </code></pre>
 </details>
 </dd>

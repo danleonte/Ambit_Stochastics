@@ -9,7 +9,7 @@ Created on Wed Apr 27 17:25:31 2022
 from quadpy import quad
 import numpy as np
 import matplotlib.pyplot as plt
-from Laplace_transform_inversion import sample_from_laplace_transform
+from .Laplace_transform_inversion import sample_from_laplace_transform
 #from scipy.integrate import quad
 
 

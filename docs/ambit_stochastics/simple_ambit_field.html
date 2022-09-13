@@ -61,7 +61,7 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 1, \phi(t) =0\) for \(t&gt;0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 0, \phi(t) =0\) for \(t&gt;0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
           jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
@@ -189,7 +189,7 @@ class simple_ambit_field:
 
     def approximate_slices(self):
         &#34;&#34;&#34;Identifies the minimal slices in \(S_{11}\) together with their areas and assigns these value to attributes
-        `unique_slices` and `unique_slices_areas`.&#34;&#34;&#34;
+        `unique_slices` and `unique_slices_areas`. See Algorithm 4 from https://arxiv.org/abs/2208.08784.&#34;&#34;&#34;
         
         print(&#39;Slice estimation procedure has started&#39;)
         start_time = time.time()
@@ -238,7 +238,8 @@ class simple_ambit_field:
         # to add more diagnostics
         print(&#39;Slice estimation procedure has finished&#39;)
         end_time = time.time()
-        print(end_time - start_time)
+        print(&#39;elapsed minutes for the slice estimation procedure: &#39;,
+              round((end_time - start_time)/60,2))
         
         percentage_points_kept = 100 * sum(dict_.values()) / self.total_nr_samples
         print(f&#34;{round(percentage_points_kept,2)}% of points are used in the slice estimation&#34;)
@@ -255,7 +256,7 @@ class simple_ambit_field:
         &#34;&#34;&#34;Method to be used in the infinite decorrelation time to determine the areas of the
         intersection of the ambit sets at time coordinates \(\\tau,\ldots, k_t \\tau\) with 
         the region of the plane given by \(t &lt; T\). The result is stored in the attribute
-        `correction_slices_areas`.
+        `correction_slices_areas`. Required for Algorithm 7 from https://arxiv.org/abs/2208.08784.
         &#34;&#34;&#34;
         
         self.correction_slices_areas = [quad(self.ambit_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
@@ -264,14 +265,14 @@ class simple_ambit_field:
         
 #    @njit
     def simulate_finite_decorrelation_time(self):
-        &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+        &#34;&#34;&#34;Implementation of Algorithm 5 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
         Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         Y_jump     = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         for k in range(self.k_s + self.I_s -1):
             for l in range(self.k_t + self.I_t - 1):
                 
-                gaussian_to_add = np.zeros((self.k_s,self.k_t))
-                jump_to_add     = np.zeros((self.k_s,self.k_t))
+                gaussian_to_add = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+                jump_to_add     = np.zeros((self.nr_simulations,self.I_s,self.I_t))
                 
                 #simulate S.
                 for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
@@ -280,8 +281,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add += slice_S * gaussian_sample_slice[:,:,np.newaxis]
-                    jump_to_add     += slice_S * jump_sample_slice[:,:,np.newaxis]
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis]
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis]
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -291,7 +292,7 @@ class simple_ambit_field:
 
 #    @njit
     def simulate_infinite_decorrelation_time(self,T):
-        &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+        &#34;&#34;&#34;Implementation of Algorithm 7 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
 
         assert T/self.tau == int(T/self.tau)
         T_tau = -int(T/self.tau)
@@ -328,8 +329,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add = slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                    jump_to_add     = slice_S * jump_sample_slice[:,:,np.newaxis] 
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis] 
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis] 
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -344,12 +345,16 @@ class simple_ambit_field:
         process is given by the independent sum of the Gaussian and jump parts. See [] for an example
         and `helpers.sampler` for the parametrisations used. The simulated values are stored in the
         attribute `values`.&#34;&#34;&#34;
-
+        
+        start_time = time.time()
+        
         # checks
         self.delete_values()
         check_trawl_function(self.ambit_function)
         check_gaussian_params(self.gaussian_part_params)
         check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+        if self.ambit_function(0) &lt;= self.x :
+            raise ValueError(&#39;vertical translations of the ambit sets have no overlap&#39;)
 
 
 
@@ -385,7 +390,11 @@ class simple_ambit_field:
 
 
         
-        self.values = self.gaussian_values + self.jump_values</code></pre>
+        self.values = self.gaussian_values + self.jump_values
+        
+        end_time = time.time()
+        print(&#39;elapsed minutes for the simulation after the slice estimation procedure: &#39;,
+              round((end_time - start_time)/60,2))</code></pre>
 </details>
 </section>
 <section>
@@ -416,7 +425,7 @@ class simple_ambit_field:
 <dt><strong><code>nr_simulation</code></strong></dt>
 <dd>positive integer: number of simulations.</dd>
 <dt><strong><code>ambit_function</code></strong></dt>
-<dd>a non-negative, continuous, strictly increasing function <span><span class="MathJax_Preview">\phi \colon (-\infty,0] \to [0,\infty)</span><script type="math/tex">\phi \colon (-\infty,0] \to [0,\infty)</script></span> with <span><span class="MathJax_Preview">\phi(0) &gt; 1, \phi(t) =0</span><script type="math/tex">\phi(0) > 1, \phi(t) =0</script></span> for <span><span class="MathJax_Preview">t&gt;0</span><script type="math/tex">t>0</script></span>.</dd>
+<dd>a non-negative, continuous, strictly increasing function <span><span class="MathJax_Preview">\phi \colon (-\infty,0] \to [0,\infty)</span><script type="math/tex">\phi \colon (-\infty,0] \to [0,\infty)</script></span> with <span><span class="MathJax_Preview">\phi(0) &gt; 0, \phi(t) =0</span><script type="math/tex">\phi(0) > 0, \phi(t) =0</script></span> for <span><span class="MathJax_Preview">t&gt;0</span><script type="math/tex">t>0</script></span>.</dd>
 <dt><strong><code>decorrelation_time</code></strong></dt>
 <dd><span><span class="MathJax_Preview">-\infty</span><script type="math/tex">-\infty</script></span> if the ambit set A is unbounded and finite, negative otherwise.</dd>
 <dt><strong><code>gaussian_part_params</code></strong></dt>
@@ -449,7 +458,7 @@ class simple_ambit_field:
           k_s: positive integer: number of ambit sets on the space axix.
           k_t: positive integer: number of ambit sets on the time axis.
           nr_simulation: positive integer: number of simulations.
-          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 1, \phi(t) =0\) for \(t&gt;0\).
+          ambit_function: a non-negative, continuous, strictly increasing function \(\phi \colon (-\infty,0] \\to [0,\infty)\) with \(\phi(0) &gt; 0, \phi(t) =0\) for \(t&gt;0\).
           decorrelation_time: \(-\infty\) if the ambit set A is unbounded and finite, negative otherwise.
           gaussian_part_params: tuple with the mean and standard deviation of the Gaussian part.                                                           
           jump_part_name: tuple with the parameters of the jump part distribution check `helpers.sampler` for the parametrisation.
@@ -577,7 +586,7 @@ class simple_ambit_field:
 
     def approximate_slices(self):
         &#34;&#34;&#34;Identifies the minimal slices in \(S_{11}\) together with their areas and assigns these value to attributes
-        `unique_slices` and `unique_slices_areas`.&#34;&#34;&#34;
+        `unique_slices` and `unique_slices_areas`. See Algorithm 4 from https://arxiv.org/abs/2208.08784.&#34;&#34;&#34;
         
         print(&#39;Slice estimation procedure has started&#39;)
         start_time = time.time()
@@ -626,7 +635,8 @@ class simple_ambit_field:
         # to add more diagnostics
         print(&#39;Slice estimation procedure has finished&#39;)
         end_time = time.time()
-        print(end_time - start_time)
+        print(&#39;elapsed minutes for the slice estimation procedure: &#39;,
+              round((end_time - start_time)/60,2))
         
         percentage_points_kept = 100 * sum(dict_.values()) / self.total_nr_samples
         print(f&#34;{round(percentage_points_kept,2)}% of points are used in the slice estimation&#34;)
@@ -643,7 +653,7 @@ class simple_ambit_field:
         &#34;&#34;&#34;Method to be used in the infinite decorrelation time to determine the areas of the
         intersection of the ambit sets at time coordinates \(\\tau,\ldots, k_t \\tau\) with 
         the region of the plane given by \(t &lt; T\). The result is stored in the attribute
-        `correction_slices_areas`.
+        `correction_slices_areas`. Required for Algorithm 7 from https://arxiv.org/abs/2208.08784.
         &#34;&#34;&#34;
         
         self.correction_slices_areas = [quad(self.ambit_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
@@ -652,14 +662,14 @@ class simple_ambit_field:
         
 #    @njit
     def simulate_finite_decorrelation_time(self):
-        &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+        &#34;&#34;&#34;Implementation of Algorithm 5 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
         Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         Y_jump     = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         for k in range(self.k_s + self.I_s -1):
             for l in range(self.k_t + self.I_t - 1):
                 
-                gaussian_to_add = np.zeros((self.k_s,self.k_t))
-                jump_to_add     = np.zeros((self.k_s,self.k_t))
+                gaussian_to_add = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+                jump_to_add     = np.zeros((self.nr_simulations,self.I_s,self.I_t))
                 
                 #simulate S.
                 for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
@@ -668,8 +678,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add += slice_S * gaussian_sample_slice[:,:,np.newaxis]
-                    jump_to_add     += slice_S * jump_sample_slice[:,:,np.newaxis]
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis]
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis]
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -679,7 +689,7 @@ class simple_ambit_field:
 
 #    @njit
     def simulate_infinite_decorrelation_time(self,T):
-        &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+        &#34;&#34;&#34;Implementation of Algorithm 7 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
 
         assert T/self.tau == int(T/self.tau)
         T_tau = -int(T/self.tau)
@@ -716,8 +726,8 @@ class simple_ambit_field:
                     gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                     jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                     
-                    gaussian_to_add = slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                    jump_to_add     = slice_S * jump_sample_slice[:,:,np.newaxis] 
+                    gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis] 
+                    jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis] 
                     
                 Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
                 Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -732,12 +742,16 @@ class simple_ambit_field:
         process is given by the independent sum of the Gaussian and jump parts. See [] for an example
         and `helpers.sampler` for the parametrisations used. The simulated values are stored in the
         attribute `values`.&#34;&#34;&#34;
-
+        
+        start_time = time.time()
+        
         # checks
         self.delete_values()
         check_trawl_function(self.ambit_function)
         check_gaussian_params(self.gaussian_part_params)
         check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+        if self.ambit_function(0) &lt;= self.x :
+            raise ValueError(&#39;vertical translations of the ambit sets have no overlap&#39;)
 
 
 
@@ -773,7 +787,11 @@ class simple_ambit_field:
 
 
         
-        self.values = self.gaussian_values + self.jump_values</code></pre>
+        self.values = self.gaussian_values + self.jump_values
+        
+        end_time = time.time()
+        print(&#39;elapsed minutes for the simulation after the slice estimation procedure: &#39;,
+              round((end_time - start_time)/60,2))</code></pre>
 </details>
 <h3>Methods</h3>
 <dl>
@@ -782,14 +800,14 @@ class simple_ambit_field:
 </code></dt>
 <dd>
 <div class="desc"><p>Identifies the minimal slices in <span><span class="MathJax_Preview">S_{11}</span><script type="math/tex">S_{11}</script></span> together with their areas and assigns these value to attributes
-<code>unique_slices</code> and <code>unique_slices_areas</code>.</p></div>
+<code>unique_slices</code> and <code>unique_slices_areas</code>. See Algorithm 4 from <a href="https://arxiv.org/abs/2208.08784.">https://arxiv.org/abs/2208.08784.</a></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def approximate_slices(self):
     &#34;&#34;&#34;Identifies the minimal slices in \(S_{11}\) together with their areas and assigns these value to attributes
-    `unique_slices` and `unique_slices_areas`.&#34;&#34;&#34;
+    `unique_slices` and `unique_slices_areas`. See Algorithm 4 from https://arxiv.org/abs/2208.08784.&#34;&#34;&#34;
     
     print(&#39;Slice estimation procedure has started&#39;)
     start_time = time.time()
@@ -838,7 +856,8 @@ class simple_ambit_field:
     # to add more diagnostics
     print(&#39;Slice estimation procedure has finished&#39;)
     end_time = time.time()
-    print(end_time - start_time)
+    print(&#39;elapsed minutes for the slice estimation procedure: &#39;,
+          round((end_time - start_time)/60,2))
     
     percentage_points_kept = 100 * sum(dict_.values()) / self.total_nr_samples
     print(f&#34;{round(percentage_points_kept,2)}% of points are used in the slice estimation&#34;)
@@ -874,7 +893,7 @@ class simple_ambit_field:
 <div class="desc"><p>Method to be used in the infinite decorrelation time to determine the areas of the
 intersection of the ambit sets at time coordinates <span><span class="MathJax_Preview">\tau,\ldots, k_t \tau</span><script type="math/tex">\tau,\ldots, k_t \tau</script></span> with
 the region of the plane given by <span><span class="MathJax_Preview">t &lt; T</span><script type="math/tex">t < T</script></span>. The result is stored in the attribute
-<code>correction_slices_areas</code>.</p></div>
+<code>correction_slices_areas</code>. Required for Algorithm 7 from <a href="https://arxiv.org/abs/2208.08784.">https://arxiv.org/abs/2208.08784.</a></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -883,7 +902,7 @@ the region of the plane given by <span><span class="MathJax_Preview">t &lt; T</s
     &#34;&#34;&#34;Method to be used in the infinite decorrelation time to determine the areas of the
     intersection of the ambit sets at time coordinates \(\\tau,\ldots, k_t \\tau\) with 
     the region of the plane given by \(t &lt; T\). The result is stored in the attribute
-    `correction_slices_areas`.
+    `correction_slices_areas`. Required for Algorithm 7 from https://arxiv.org/abs/2208.08784.
     &#34;&#34;&#34;
     
     self.correction_slices_areas = [quad(self.ambit_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
@@ -980,12 +999,16 @@ attribute <code>values</code>.</p></div>
     process is given by the independent sum of the Gaussian and jump parts. See [] for an example
     and `helpers.sampler` for the parametrisations used. The simulated values are stored in the
     attribute `values`.&#34;&#34;&#34;
-
+    
+    start_time = time.time()
+    
     # checks
     self.delete_values()
     check_trawl_function(self.ambit_function)
     check_gaussian_params(self.gaussian_part_params)
     check_jump_part_and_params(self.jump_part_name,self.jump_part_params)
+    if self.ambit_function(0) &lt;= self.x :
+        raise ValueError(&#39;vertical translations of the ambit sets have no overlap&#39;)
 
 
 
@@ -1021,28 +1044,31 @@ attribute <code>values</code>.</p></div>
 
 
     
-    self.values = self.gaussian_values + self.jump_values</code></pre>
+    self.values = self.gaussian_values + self.jump_values
+    
+    end_time = time.time()
+    print(&#39;elapsed minutes for the simulation after the slice estimation procedure: &#39;,
+          round((end_time - start_time)/60,2))</code></pre>
 </details>
 </dd>
 <dt id="ambit_stochastics.simple_ambit_field.simple_ambit_field.simulate_finite_decorrelation_time"><code class="name flex">
 <span>def <span class="ident">simulate_finite_decorrelation_time</span></span>(<span>self)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>implementation of algorithm
-[nr to be added] in [paper link]</p></div>
+<div class="desc"><p>Implementation of Algorithm 5 from <a href="https://arxiv.org/abs/2208.08784">https://arxiv.org/abs/2208.08784</a></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def simulate_finite_decorrelation_time(self):
-    &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+    &#34;&#34;&#34;Implementation of Algorithm 5 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
     Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
     Y_jump     = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
     for k in range(self.k_s + self.I_s -1):
         for l in range(self.k_t + self.I_t - 1):
             
-            gaussian_to_add = np.zeros((self.k_s,self.k_t))
-            jump_to_add     = np.zeros((self.k_s,self.k_t))
+            gaussian_to_add = np.zeros((self.nr_simulations,self.I_s,self.I_t))
+            jump_to_add     = np.zeros((self.nr_simulations,self.I_s,self.I_t))
             
             #simulate S.
             for slice_S,area_S in zip(self.unique_slices,self.unique_slices_areas):
@@ -1051,8 +1077,8 @@ attribute <code>values</code>.</p></div>
                 gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                 jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                 
-                gaussian_to_add += slice_S * gaussian_sample_slice[:,:,np.newaxis]
-                jump_to_add     += slice_S * jump_sample_slice[:,:,np.newaxis]
+                gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis]
+                jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis]
                 
             Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
             Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add
@@ -1065,14 +1091,13 @@ attribute <code>values</code>.</p></div>
 <span>def <span class="ident">simulate_infinite_decorrelation_time</span></span>(<span>self, T)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>implementation of algorithm
-[nr to be added] in [paper link]</p></div>
+<div class="desc"><p>Implementation of Algorithm 7 from <a href="https://arxiv.org/abs/2208.08784">https://arxiv.org/abs/2208.08784</a></p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def simulate_infinite_decorrelation_time(self,T):
-    &#34;&#34;&#34;implementation of algorithm  [nr to be added] in [paper link]&#34;&#34;&#34;
+    &#34;&#34;&#34;Implementation of Algorithm 7 from https://arxiv.org/abs/2208.08784&#34;&#34;&#34;
 
     assert T/self.tau == int(T/self.tau)
     T_tau = -int(T/self.tau)
@@ -1109,8 +1134,8 @@ attribute <code>values</code>.</p></div>
                 gaussian_sample_slice = gaussian_part_sampler(self.gaussian_part_params,tiled_area_S)
                 jump_sample_slice     = jump_part_sampler(self.jump_part_params,tiled_area_S,self.jump_part_name)
                 
-                gaussian_to_add = slice_S * gaussian_sample_slice[:,:,np.newaxis] 
-                jump_to_add     = slice_S * jump_sample_slice[:,:,np.newaxis] 
+                gaussian_to_add = gaussian_to_add + slice_S * gaussian_sample_slice[:,:,np.newaxis] 
+                jump_to_add     = jump_to_add     + slice_S * jump_sample_slice[:,:,np.newaxis] 
                 
             Y_gaussian[:,k:k+self.I_s,l:l+self.I_t] +=  gaussian_to_add
             Y_jump[:,k:k+self.I_s,l:l+self.I_t]     +=  jump_to_add

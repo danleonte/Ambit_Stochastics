@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>ambit_stochastics.helpers.acf_functions API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS_CHTML" integrity="sha256-kZafAc6mZvK3W3v1pHOcUix30OHQN6pU/NO2oFkqZVw=" crossorigin></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>ambit_stochastics.helpers.acf_functions</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">from statsmodels.tsa.stattools import acf
+from scipy.integrate import quad
+from scipy.optimize import minimize
+import numpy as np
+
+def corr_matrix_from_corr_vector(corr_vector):
+    &#34;&#34;&#34;inputs a vector = [corr(0),corr(s),...,corr((k-1)*s)] and outputs the arrray
+    Sigma_tilde_ij = overlap area at lag |i-j| = corr(|i-j|*s)
+    &#34;&#34;&#34;
+    if isinstance(corr_vector,np.ndarray):
+        assert len(corr_vector.shape) == 1
+        corr_vector = tuple(corr_vector)
+    assert isinstance(corr_vector,(tuple,list))
+    
+    k = len(corr_vector)
+    corr_matrix = [corr_vector[1:i+1][::-1] + corr_vector[:k-i] for i in range(k)]
+    return np.array(corr_matrix)
+
+#in the following correlation functions corr_exponnetial,corr_gama,corr_ig      h &gt; 0
+def corr_exponential_envelope(h,params):
+     u = params[0]
+     return np.exp(-u * h)
+
+def corr_gamma_envelope(h,params):
+    H,delta = params
+    return (1+h/delta)**(-H)
+
+def corr_ig_envelope(h,params):
+    gamma,delta =  params
+    return np.exp(delta * gamma *(1-np.sqrt(2*h/gamma**2+1)))
+
+def trawl_acf(envelope, envelope_function=None):
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;,&#39;custom&#39;],&#39;please check the value of envelope&#39;
+    
+    if envelope == &#34;custom&#34;:
+        &#34;&#34;&#34;describe how to specify envelope_function&#34;&#34;&#34;
+        assert callable(envelope_function)
+        
+        def corr_other(h,params):
+            return quad(envelope_function(params), a=-np.inf, b=-h)[0] / quad(envelope_function(params), a=-np.inf, b=0)[0]
+
+        return corr_other
+    
+    else:
+        
+        assert envelope_function == None
+        
+        if envelope == &#34;exponential&#34;:
+            return corr_exponential_envelope
+
+        if envelope == &#34;gamma&#34;:
+            return corr_gamma_envelope
+
+        if envelope == &#34;ig&#34;:
+            return corr_ig_envelope
+
+
+def bounds_and_initial_guess_for_acf_params(envelope):
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;]
+    
+    if envelope == &#39;exponential&#39;:
+        bounds = ((0,np.inf),)
+        initial_guess = (1,)
+        
+    elif envelope  == &#39;gamma&#39; or envelope == &#39;ig&#39;:
+        bounds = ((0.0001,np.inf),(0.0001,np.inf))
+        initial_guess = (1,1)
+    
+    
+    return bounds,initial_guess
+
+
+def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
+                           bounds = None, envelope_function = None):
+
+    
+    #parameter checks
+    assert isinstance(s,(float,int))
+    assert isinstance(lags,tuple)
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;,&#39;custom&#39;]
+    assert len(simulations.shape) == 2
+    #assert isinstance(envelope_params,tuple)
+    
+    assert (isinstance(initial_guess,tuple) and all(isinstance(i,tuple) for i in initial_guess)) or initial_guess     == None
+    assert isinstance(bounds,tuple)        or bounds            == None
+    assert callable(envelope_function)     or envelope_function == None 
+
+    
+    theoretical_acf_func = trawl_acf(envelope, envelope_function)
+    empirical_acf   = np.apply_along_axis(lambda x: acf(x,nlags = max(lags)),arr = simulations,axis=1)
+    empirical_acf   = empirical_acf[:,lags]
+    
+    #this will look s up in the `fit_trawl_envelope_gmm` scope
+    def criterion(params,empirical_acf_row):
+        theoretical = np.array([theoretical_acf_func(s*i,params) for i in lags])
+        return np.sum((empirical_acf_row - theoretical)**2)
+        
+    if envelope == &#39;custom&#39;:
+        #must pass the envelope function and the initial guess
+        assert isinstance(initial_guess,tuple) 
+        assert callable(envelope_function)
+    
+    if envelope != &#39;custom&#39;:
+        bounds,_ = bounds_and_initial_guess_for_acf_params(envelope)
+        if initial_guess  == None:
+            initial_guess = tuple([_ for index_ in range(len(empirical_acf))])
+    
+    #if the custom function has no bounds
+    #if bounds == None:
+    #    result = [minimize(criterion,x0 = initial_guess, args= (empirical_acf_row,),
+    #                                 method=&#39;BFGS&#39;).x for empirical_acf_row in empirical_acf]
+    #    
+    #in all the other cases, we have bounds    
+    #else:
+    result = [minimize(criterion,x0 = initial_guess[j], args= (empirical_acf[j],),
+                       method=&#39;L-BFGS-B&#39;, bounds = bounds).x for j in range(len(empirical_acf))]
+        
+    return np.array(result)</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="ambit_stochastics.helpers.acf_functions.bounds_and_initial_guess_for_acf_params"><code class="name flex">
+<span>def <span class="ident">bounds_and_initial_guess_for_acf_params</span></span>(<span>envelope)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def bounds_and_initial_guess_for_acf_params(envelope):
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;]
+    
+    if envelope == &#39;exponential&#39;:
+        bounds = ((0,np.inf),)
+        initial_guess = (1,)
+        
+    elif envelope  == &#39;gamma&#39; or envelope == &#39;ig&#39;:
+        bounds = ((0.0001,np.inf),(0.0001,np.inf))
+        initial_guess = (1,1)
+    
+    
+    return bounds,initial_guess</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.corr_exponential_envelope"><code class="name flex">
+<span>def <span class="ident">corr_exponential_envelope</span></span>(<span>h, params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def corr_exponential_envelope(h,params):
+     u = params[0]
+     return np.exp(-u * h)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.corr_gamma_envelope"><code class="name flex">
+<span>def <span class="ident">corr_gamma_envelope</span></span>(<span>h, params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def corr_gamma_envelope(h,params):
+    H,delta = params
+    return (1+h/delta)**(-H)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.corr_ig_envelope"><code class="name flex">
+<span>def <span class="ident">corr_ig_envelope</span></span>(<span>h, params)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def corr_ig_envelope(h,params):
+    gamma,delta =  params
+    return np.exp(delta * gamma *(1-np.sqrt(2*h/gamma**2+1)))</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.corr_matrix_from_corr_vector"><code class="name flex">
+<span>def <span class="ident">corr_matrix_from_corr_vector</span></span>(<span>corr_vector)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>inputs a vector = [corr(0),corr(s),&hellip;,corr((k-1)<em>s)] and outputs the arrray
+Sigma_tilde_ij = overlap area at lag |i-j| = corr(|i-j|</em>s)</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def corr_matrix_from_corr_vector(corr_vector):
+    &#34;&#34;&#34;inputs a vector = [corr(0),corr(s),...,corr((k-1)*s)] and outputs the arrray
+    Sigma_tilde_ij = overlap area at lag |i-j| = corr(|i-j|*s)
+    &#34;&#34;&#34;
+    if isinstance(corr_vector,np.ndarray):
+        assert len(corr_vector.shape) == 1
+        corr_vector = tuple(corr_vector)
+    assert isinstance(corr_vector,(tuple,list))
+    
+    k = len(corr_vector)
+    corr_matrix = [corr_vector[1:i+1][::-1] + corr_vector[:k-i] for i in range(k)]
+    return np.array(corr_matrix)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.fit_trawl_envelope_gmm"><code class="name flex">
+<span>def <span class="ident">fit_trawl_envelope_gmm</span></span>(<span>s, simulations, lags, envelope, initial_guess=None, bounds=None, envelope_function=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def fit_trawl_envelope_gmm(s,simulations,lags,envelope,initial_guess = None,
+                           bounds = None, envelope_function = None):
+
+    
+    #parameter checks
+    assert isinstance(s,(float,int))
+    assert isinstance(lags,tuple)
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;,&#39;custom&#39;]
+    assert len(simulations.shape) == 2
+    #assert isinstance(envelope_params,tuple)
+    
+    assert (isinstance(initial_guess,tuple) and all(isinstance(i,tuple) for i in initial_guess)) or initial_guess     == None
+    assert isinstance(bounds,tuple)        or bounds            == None
+    assert callable(envelope_function)     or envelope_function == None 
+
+    
+    theoretical_acf_func = trawl_acf(envelope, envelope_function)
+    empirical_acf   = np.apply_along_axis(lambda x: acf(x,nlags = max(lags)),arr = simulations,axis=1)
+    empirical_acf   = empirical_acf[:,lags]
+    
+    #this will look s up in the `fit_trawl_envelope_gmm` scope
+    def criterion(params,empirical_acf_row):
+        theoretical = np.array([theoretical_acf_func(s*i,params) for i in lags])
+        return np.sum((empirical_acf_row - theoretical)**2)
+        
+    if envelope == &#39;custom&#39;:
+        #must pass the envelope function and the initial guess
+        assert isinstance(initial_guess,tuple) 
+        assert callable(envelope_function)
+    
+    if envelope != &#39;custom&#39;:
+        bounds,_ = bounds_and_initial_guess_for_acf_params(envelope)
+        if initial_guess  == None:
+            initial_guess = tuple([_ for index_ in range(len(empirical_acf))])
+    
+    #if the custom function has no bounds
+    #if bounds == None:
+    #    result = [minimize(criterion,x0 = initial_guess, args= (empirical_acf_row,),
+    #                                 method=&#39;BFGS&#39;).x for empirical_acf_row in empirical_acf]
+    #    
+    #in all the other cases, we have bounds    
+    #else:
+    result = [minimize(criterion,x0 = initial_guess[j], args= (empirical_acf[j],),
+                       method=&#39;L-BFGS-B&#39;, bounds = bounds).x for j in range(len(empirical_acf))]
+        
+    return np.array(result)</code></pre>
+</details>
+</dd>
+<dt id="ambit_stochastics.helpers.acf_functions.trawl_acf"><code class="name flex">
+<span>def <span class="ident">trawl_acf</span></span>(<span>envelope, envelope_function=None)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def trawl_acf(envelope, envelope_function=None):
+    assert envelope in [&#39;exponential&#39;,&#39;gamma&#39;,&#39;ig&#39;,&#39;custom&#39;],&#39;please check the value of envelope&#39;
+    
+    if envelope == &#34;custom&#34;:
+        &#34;&#34;&#34;describe how to specify envelope_function&#34;&#34;&#34;
+        assert callable(envelope_function)
+        
+        def corr_other(h,params):
+            return quad(envelope_function(params), a=-np.inf, b=-h)[0] / quad(envelope_function(params), a=-np.inf, b=0)[0]
+
+        return corr_other
+    
+    else:
+        
+        assert envelope_function == None
+        
+        if envelope == &#34;exponential&#34;:
+            return corr_exponential_envelope
+
+        if envelope == &#34;gamma&#34;:
+            return corr_gamma_envelope
+
+        if envelope == &#34;ig&#34;:
+            return corr_ig_envelope</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="ambit_stochastics.helpers" href="index.html">ambit_stochastics.helpers</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="ambit_stochastics.helpers.acf_functions.bounds_and_initial_guess_for_acf_params" href="#ambit_stochastics.helpers.acf_functions.bounds_and_initial_guess_for_acf_params">bounds_and_initial_guess_for_acf_params</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.corr_exponential_envelope" href="#ambit_stochastics.helpers.acf_functions.corr_exponential_envelope">corr_exponential_envelope</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.corr_gamma_envelope" href="#ambit_stochastics.helpers.acf_functions.corr_gamma_envelope">corr_gamma_envelope</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.corr_ig_envelope" href="#ambit_stochastics.helpers.acf_functions.corr_ig_envelope">corr_ig_envelope</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.corr_matrix_from_corr_vector" href="#ambit_stochastics.helpers.acf_functions.corr_matrix_from_corr_vector">corr_matrix_from_corr_vector</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.fit_trawl_envelope_gmm" href="#ambit_stochastics.helpers.acf_functions.fit_trawl_envelope_gmm">fit_trawl_envelope_gmm</a></code></li>
+<li><code><a title="ambit_stochastics.helpers.acf_functions.trawl_acf" href="#ambit_stochastics.helpers.acf_functions.trawl_acf">trawl_acf</a></code></li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>

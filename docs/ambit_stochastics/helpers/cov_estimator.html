@@ -29,24 +29,25 @@
 </summary>
 <pre><code class="python">import numpy  as np
 
-def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):
-    &#34;&#34;&#34;
+def compute_empirical_covariance_matrix(values,max_lag_time,max_lag_space):
+    &#34;&#34;&#34;Check the &#39;Simple Ambit field example usage&#39; Jupyter notebook to see an example.
+
     Args:
-      values:
-      max_lag_space:
-      max_lag_time:
+      values: a numpy array containing the values of the simulated ambit field
+      max_lag_time: positive integer: the maximum number of lags at which to estimate autocorrelation and autocovariance on the time axis
+      max_lag_space: positive integer: the maximum number at which to estimate autocorrelation and autocovaraince on the space axis
           
     Returns:
-      result_cov:
-      result_cor
+      result_cov: a numpy array with shape
+      result_cor: a numpy array with shape
     &#34;&#34;&#34;
     nr_simulations, nr_rows, nr_columns = values.shape
-    result_cov = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
-    result_cor = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
+    result_cov = np.zeros((nr_simulations,max_lag_time+1,max_lag_space+1))
+    result_cor = np.zeros((nr_simulations,max_lag_time+1,max_lag_space+1))
 
     
-    for row in range(max_lag_space+1):
-        for column in range(max_lag_time+1):
+    for row in range(max_lag_time+1):
+        for column in range(max_lag_space+1):
             
             nr_elements = (nr_rows - row)*(nr_columns - column)
             
@@ -80,38 +81,49 @@ def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="ambit_stochastics.helpers.cov_estimator.compute_empirical_covariance_matrix"><code class="name flex">
-<span>def <span class="ident">compute_empirical_covariance_matrix</span></span>(<span>values, max_lag_space, max_lag_time)</span>
+<span>def <span class="ident">compute_empirical_covariance_matrix</span></span>(<span>values, max_lag_time, max_lag_space)</span>
 </code></dt>
 <dd>
-<div class="desc"><h2 id="args">Args</h2>
-<p>values:
-max_lag_space:
-max_lag_time:</p>
+<div class="desc"><p>Check the 'Simple Ambit field example usage' Jupyter notebook to see an example.</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>values</code></strong></dt>
+<dd>a numpy array containing the values of the simulated ambit field</dd>
+<dt><strong><code>max_lag_time</code></strong></dt>
+<dd>positive integer: the maximum number of lags at which to estimate autocorrelation and autocovariance on the time axis</dd>
+<dt><strong><code>max_lag_space</code></strong></dt>
+<dd>positive integer: the maximum number at which to estimate autocorrelation and autocovaraince on the space axis</dd>
+</dl>
 <h2 id="returns">Returns</h2>
-<p>result_cov:
-result_cor</p></div>
+<dl>
+<dt><code>result_cov</code></dt>
+<dd>a numpy array with shape</dd>
+<dt><code>result_cor</code></dt>
+<dd>a numpy array with shape</dd>
+</dl></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def compute_empirical_covariance_matrix(values,max_lag_space,max_lag_time):
-    &#34;&#34;&#34;
+<pre><code class="python">def compute_empirical_covariance_matrix(values,max_lag_time,max_lag_space):
+    &#34;&#34;&#34;Check the &#39;Simple Ambit field example usage&#39; Jupyter notebook to see an example.
+
     Args:
-      values:
-      max_lag_space:
-      max_lag_time:
+      values: a numpy array containing the values of the simulated ambit field
+      max_lag_time: positive integer: the maximum number of lags at which to estimate autocorrelation and autocovariance on the time axis
+      max_lag_space: positive integer: the maximum number at which to estimate autocorrelation and autocovaraince on the space axis
           
     Returns:
-      result_cov:
-      result_cor
+      result_cov: a numpy array with shape
+      result_cor: a numpy array with shape
     &#34;&#34;&#34;
     nr_simulations, nr_rows, nr_columns = values.shape
-    result_cov = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
-    result_cor = np.zeros((nr_simulations,max_lag_space+1,max_lag_time+1))
+    result_cov = np.zeros((nr_simulations,max_lag_time+1,max_lag_space+1))
+    result_cor = np.zeros((nr_simulations,max_lag_time+1,max_lag_space+1))
 
     
-    for row in range(max_lag_space+1):
-        for column in range(max_lag_time+1):
+    for row in range(max_lag_time+1):
+        for column in range(max_lag_space+1):
             
             nr_elements = (nr_rows - row)*(nr_columns - column)
             
