@@ -159,7 +159,7 @@ class simple_ambit_field:
 
     def approximate_slices(self):
         """Identifies the minimal slices in \(S_{11}\) together with their areas and assigns these value to attributes
-        `unique_slices` and `unique_slices_areas`."""
+        `unique_slices` and `unique_slices_areas`. See Algorithm 4 from https://arxiv.org/abs/2208.08784."""
         
         print('Slice estimation procedure has started')
         start_time = time.time()
@@ -226,7 +226,7 @@ class simple_ambit_field:
         """Method to be used in the infinite decorrelation time to determine the areas of the
         intersection of the ambit sets at time coordinates \(\\tau,\ldots, k_t \\tau\) with 
         the region of the plane given by \(t < T\). The result is stored in the attribute
-        `correction_slices_areas`.
+        `correction_slices_areas`. Required for Algorithm 7 from https://arxiv.org/abs/2208.08784.
         """
         
         self.correction_slices_areas = [quad(self.ambit_function, a = T - (i+1) * self.tau, b= T - i * self.tau , limit=500)[0]  
@@ -235,7 +235,7 @@ class simple_ambit_field:
         
 #    @njit
     def simulate_finite_decorrelation_time(self):
-        """implementation of algorithm  [nr to be added] in [paper link]"""
+        """Implementation of Algorithm 5 from https://arxiv.org/abs/2208.08784"""
         Y_gaussian = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         Y_jump     = np.zeros((self.nr_simulations,self.k_s + 2 *self.I_s -2,self.k_t + 2 * self.I_t-2))
         for k in range(self.k_s + self.I_s -1):
@@ -262,7 +262,7 @@ class simple_ambit_field:
 
 #    @njit
     def simulate_infinite_decorrelation_time(self,T):
-        """implementation of algorithm  [nr to be added] in [paper link]"""
+        """Implementation of Algorithm 7 from https://arxiv.org/abs/2208.08784"""
 
         assert T/self.tau == int(T/self.tau)
         T_tau = -int(T/self.tau)
@@ -363,5 +363,5 @@ class simple_ambit_field:
         self.values = self.gaussian_values + self.jump_values
         
         end_time = time.time()
-        print('elapsed minutes for the slice estimation procedure: ',
+        print('elapsed minutes for the simulation after the slice estimation procedure: ',
               round((end_time - start_time)/60,2))
