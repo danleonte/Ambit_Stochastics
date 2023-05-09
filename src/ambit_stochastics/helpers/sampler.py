@@ -59,6 +59,17 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)  
         
         #this is a different parametrisation
+        
+        #to change between (delta,gamma) and (mu,scale) and vice-versa
+        #sqrt{scale} = delta, gamma = 1 / (mu * sqrt{scale})
+        #scale = delta**2, mu = 1 / (gamma * delta)
+        
+        #mu = delta / gamma, lambda = delta**2
+        
+        
+        #to check again if the below transformations are correct
+        
+        
         #from the wikipedia pagey
         #scipy (mu,scale) -> wiki (mu= mu * scale, lambda = scale)
         #wiki (mu, lambda) -> scipy (mu = mu/lambda, scale = lambda)
@@ -72,7 +83,23 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         #wiki scaling: L' ~ IG(mu,lambda) ->  L(A) ~ IG( mu * Leb(A), lamda * Leb(A)^2)
         #TO CHECK THIS AGAIN
         #mu, scale = jump_part_params
-       # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2)         
+       # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2) 
+
+    elif distr_name == 'normalinvgauss':
+        a, b, loc, scale = jump_part_params 
+        #switch to the second parameterization in scipy
+        #https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norminvgauss.html
+        #i.e. the same as in tensorflow https://www.tensorflow.org/probability/api_docs/python/tfp/distributions/NormalInverseGaussian
+        #alpha, beta, mu, delta =  a/scale, b/scale, loc, scale 
+        #do the scaling
+        #alpha_new, beta_new , mu_new, delta_new = alpha, beta, mu * areas, delta * areas
+        #back to scipy
+        #a_new, b_new, loc_new, scale_new = delta_new * alpha_new, delta_new * beta_new, mu_new, delta_new
+        #samples = norminvgauss.rvs(a = a_new, b = b_new, loc= loc_new, scale = scale_new)
+        
+        samples = norminvgauss.rvs(a = a *areas, b = b * areas, loc = loc* areas, scale = scale * areas)
+        
+        
             
     ###discrete distributions
     elif distr_name == 'poisson':
@@ -104,6 +131,8 @@ def generate_cpp_values_associated_to_points(nr_points,cpp_part_name,cpp_part_pa
     elif cpp_part_name == 'nbinom':
         
          return nbinom.rvs(n = cpp_part_params[0], p = cpp_part_params[1], size = nr_points)
+     
+    
 
         
         
