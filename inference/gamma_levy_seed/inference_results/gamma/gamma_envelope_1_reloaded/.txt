@@ -1,0 +1,21 @@
+lags are(1, 3, 5, 10, 15)
+lags are(1, 3, 5, 10)
+lags are(1, 3, 5)
+gmm fitting finished, time taken: 0.0 minutes 
+lags_index is: 0
+n_index is: 0simulation 0 / 100
+simulation 0 is very problematicsimulation 1 / 100
+simulation 1 is very problematicsimulation 2 / 100
+simulation 2 is very problematicsimulation 3 / 100
+simulation 3 is very problematicsimulation 4 / 100
+simulation 4 is very problematicsimulation 5 / 100
+simulation 5 is very problematicsimulation 6 / 100
+simulation 6 is very problematicsimulation 7 / 100
+simulation 7 is very problematicsimulation 8 / 100
+simulation 8 is very problematicsimulation 9 / 100
+simulation 9 is very problematicsimulation 10 / 100
+simulation 10 is very problematicsimulation 11 / 100
+simulation 11 is very problematicsimulation 12 / 100
+simulation 12 is very problematicsimulation 13 / 100
+simulation 13 is very problematicsimulation 14 / 100
+simulation 14 is very problematicsimulation 15 / 100

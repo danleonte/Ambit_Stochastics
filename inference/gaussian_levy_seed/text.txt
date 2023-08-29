@@ -1,0 +1,52 @@
+lags are(1, 2, 3, 5)
+gmm fitting finished, time taken: 0.0 minutes 
+lags_index is: 0
+n_index is: 0simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+current lags time was: 9.0
+cl fitting finished, time taken: 9.0 minutes 
+lags are(1, 2, 3, 5)
+lags are(1, 3, 5)
+gmm fitting finished, time taken: 0.0 minutes 
+lags_index is: 0
+n_index is: 0simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+lags_index is: 0
+n_index is: 1simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+lags_index is: 0
+n_index is: 2simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+current lags time was: 18.0
+lags_index is: 1
+n_index is: 0simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+lags_index is: 1
+n_index is: 1simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+lags_index is: 1
+n_index is: 2simulation 0 / 5
+simulation 1 / 5
+simulation 2 / 5
+simulation 3 / 5
+simulation 4 / 5
+current lags time was: 18.0
+cl fitting finished, time taken: 36.0 minutes 
