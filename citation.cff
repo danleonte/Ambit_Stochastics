@@ -1,11 +1,11 @@
-cff-version: 1.0.5
+cff-version: 1.0.6
 message: "If you use this software, please cite it as below."
 authors:
 - family-names: "Leonte"
   given-names: "Dan"
   orcid: https://orcid.org/0000-0001-9381-1395
 title: "Ambit_Stochastics"
-doi: 10.5281/zenodo.7081979
-date-released: 15/09/2022
-version: 1.0.5
+doi: DOI: 10.5281/zenodo.8298074
+date-released: 29/08/2023
+version: 1.0.6
 url: "https://github.com/danleonte/Ambit_Stochastics"
