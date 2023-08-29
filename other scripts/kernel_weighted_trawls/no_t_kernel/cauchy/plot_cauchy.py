@@ -5,6 +5,9 @@ Created on Thu Jun  9 16:53:55 2022
 """
 import numpy as np
 from matplotlib import pyplot as plt
+import seaborn as sns
+sns.set_theme()
+
 
 tau = 0.5 #check the two scripts agree
 nr_trawls = 250  #check the two scripts agree
@@ -18,5 +21,5 @@ with open('cauchy_part.npy', 'rb') as f:
 f,ax = plt.subplots()
 ax.plot(tau * np.arange(1,nr_trawls+1), result, linewidth=1)
 #ax.set_title()
-plt.savefig('cauchy.png', bbox_inches='tight')
+plt.savefig('seaborn_style_cauchy.png', bbox_inches='tight')
  

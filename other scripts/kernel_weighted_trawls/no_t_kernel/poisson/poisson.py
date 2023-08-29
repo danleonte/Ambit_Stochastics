@@ -11,6 +11,9 @@ import numpy as np
 from scipy.integrate import quad
 from scipy.stats  import poisson
 from matplotlib import pyplot as plt
+import seaborn as sns
+sns.set_theme()
+
 
 
 
@@ -65,7 +68,7 @@ if __name__ == '__main__':
         f,ax = plt.subplots()
         ax.plot(tau * np.arange(1,nr_trawls+1), result[simulation_nr],linewidth=1)
         #ax.set_title()
-        plt.savefig('poisson_simulation_nr_' + str(simulation_nr) + '.png', bbox_inches='tight')
+        plt.savefig('seaborn_style_poisson_simulation_nr_' + str(simulation_nr) + '.png', bbox_inches='tight')
         
         
 
