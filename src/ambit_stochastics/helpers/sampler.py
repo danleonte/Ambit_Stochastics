@@ -2,7 +2,10 @@
          
 import numpy as np
 from scipy.stats import norm,gamma,cauchy,invgauss,norminvgauss,\
-                            geninvgauss,bernoulli,binom,nbinom,poisson,logser           
+                            bernoulli,binom,nbinom,poisson,logser           
+
+
+
 
 def gaussian_part_sampler(gaussian_part_params,areas):
     """Simulates the Gaussian part (including drift) of the Levy basis over disjoint sets
@@ -19,6 +22,9 @@ def gaussian_part_sampler(gaussian_part_params,areas):
     drift,scale = gaussian_part_params
     gaussian_sample = norm.rvs(loc = drift * areas, scale = scale *(areas)**0.5)
     return gaussian_sample
+
+
+
     
 def jump_part_sampler(jump_part_params,areas,distr_name):
     """Simulates the jump part of the Levy basis over disjoint sets; distributions are named 
@@ -38,7 +44,7 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
     if np.any(areas_copy < 0):
         raise ValueError('slice areas cant be negative')
     
-    areas[index] = 100 #random number which will be removed
+    areas[index] = 10 #random number which will be removed
     
     if distr_name == None:
         samples = np.zeros(shape= areas.shape)
@@ -85,8 +91,16 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         #mu, scale = jump_part_params
        # samples   = invgauss.rvs(loc = 0, mu = mu / areas , scale = scale * areas**2) 
 
-    elif distr_name == 'normalinvgauss':
+    elif distr_name == 'norminvgauss':
+
         a, b, loc, scale = jump_part_params 
+        
+        assert a**2 > b**2,'a**2 must be greater than b**2'
+        assert a > 0 
+        assert scale > 0
+        samples = norminvgauss.rvs(a = a *areas, b = b * areas, loc = loc* areas, scale = scale * areas)
+
+        
         #switch to the second parameterization in scipy
         #https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.norminvgauss.html
         #i.e. the same as in tensorflow https://www.tensorflow.org/probability/api_docs/python/tfp/distributions/NormalInverseGaussian
@@ -96,9 +110,6 @@ def jump_part_sampler(jump_part_params,areas,distr_name):
         #back to scipy
         #a_new, b_new, loc_new, scale_new = delta_new * alpha_new, delta_new * beta_new, mu_new, delta_new
         #samples = norminvgauss.rvs(a = a_new, b = b_new, loc= loc_new, scale = scale_new)
-        
-        samples = norminvgauss.rvs(a = a *areas, b = b * areas, loc = loc* areas, scale = scale * areas)
-        
         
             
     ###discrete distributions
@@ -133,9 +144,6 @@ def generate_cpp_values_associated_to_points(nr_points,cpp_part_name,cpp_part_pa
          return nbinom.rvs(n = cpp_part_params[0], p = cpp_part_params[1], size = nr_points)
      
     
-
-        
-        
         
 
 def generate_cpp_points(min_x,max_x,min_t,max_t,cpp_part_name,cpp_part_params,cpp_intensity,custom_sampler):
@@ -150,7 +158,6 @@ def generate_cpp_points(min_x,max_x,min_t,max_t,cpp_part_name,cpp_part_params,cp
     
     return points_x,points_t,associated_values
         
-    
-    
-    
-    
+
+
+
