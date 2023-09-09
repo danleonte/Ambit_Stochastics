@@ -42,10 +42,10 @@ def check_jump_part_and_params(jump_part_name,jump_part_params):
         assert all(isinstance(i,(int,float)) for i in jump_part_params),'parameters of the jump part are not numbers'
         
         #jump part_name
-        if jump_part_name in ['norminvgauss','geninvgauss','nbinom']: #to also add hyperbolic distributions 
+        if jump_part_name in ['nbinom']: #to also add hyperbolic distributions 
             raise ValueError('distribution not yet supported')
 
-        elif jump_part_name not in [None,'invgauss','gamma','cauchy','poisson']:
+        elif jump_part_name not in [None,'norminvgauss','invgauss','gamma','cauchy','poisson']:
             raise ValueError('unknown distribution')
             
 def check_grid_params(mesh_size,truncation_grid,times_grid):
