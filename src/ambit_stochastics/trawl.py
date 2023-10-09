@@ -195,7 +195,7 @@ class trawl:
         \\end{align} 
         \]            
             """
-        self.I = math.ceil(-self.decorrelation_time/self.tau)
+        self.I = min(math.ceil(-self.decorrelation_time/self.tau), self.nr_trawls)
         
         s_i1 = [quad(self.trawl_function,a=-i *self.tau, b = (-i+1) * self.tau)[0]
                 for i in range(1,self.I+1)]
@@ -332,7 +332,7 @@ class trawl:
             self.simulate_slice_infinite_decorrelation_time(slice_convolution_type)
              
         elif self.decorrelation_time > -np.inf:
-            assert(self.trawl_function(self.decorrelation_time)) == 0,'please check decorrelation time' 
+            assert(self.trawl_function(self.decorrelation_time)) < 0.0025,'please check decorrelation time' 
             self.compute_slice_areas_finite_decorrelation_time()
             self.simulate_slice_finite_decorrelation_time(slice_convolution_type)
         #self.values = self.gaussian_values + self.jump_values

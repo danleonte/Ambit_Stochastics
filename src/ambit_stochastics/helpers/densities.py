@@ -26,28 +26,28 @@ def get_new_params_and_sampler(params, area, distr_name):
     raise ValueError
     
 
-def pdf_or_log_pdf(distr_name, params, area, log):
+def pdf_or_log_pdf(distr_name, params, areas, log):
     """closely follows the jump_part_sampler function in the same script. """
     
     if distr_name   == 'gaussian':
         
         mu, scale = params
-        rv        = norm(loc  = mu * area, scale = scale *(area)**0.5)
+        rv        = norm(loc  = mu * areas, scale = scale *(areas)**0.5)
         
     elif distr_name == 'gamma':
         
         a,scale = params
-        rv      = gamma(a = a * area, loc = 0, scale = scale)
+        rv      = gamma(a = a * areas, loc = 0, scale = [scale] * len(areas))
         
     elif distr_name == 'cauchy':
 
         scale = params[0]
-        rv    = cauchy(loc = 0, scale = scale * area)
+        rv    = cauchy(loc = [0] * len(areas), scale = scale * areas)
         
     elif distr_name == 'invgauss':
     
         mu, scale = params
-        rv        = invgauss(loc = 0, mu = mu / area , scale = scale * area**2) 
+        rv        = invgauss(loc = [0] * len(areas) , mu = mu / areas , scale = scale * areas**2) 
         
     elif distr_name == 'norminvgauss':
         
@@ -57,7 +57,7 @@ def pdf_or_log_pdf(distr_name, params, area, log):
         assert a > 0 
         assert scale > 0     
         
-        rv = norminvgauss(a = a *area, b = b * area, loc = loc* area, scale = scale * area)
+        rv = norminvgauss(a = a *areas, b = b * areas, loc = loc* areas, scale = scale * areas)
         
         
     if log == True:
