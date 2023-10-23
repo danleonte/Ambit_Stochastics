@@ -20,12 +20,14 @@ def automated_rej_sampling(sampler_f_max, other_pdfs, f_modes, k, testing = 1):
     
     alpha = np.prod(f_modes) / np.max(f_modes)
     acceptance_rate = 1/ (k * alpha)
+    if acceptance_rate < 10**(-5):
+        print('acceptance_rate is ',acceptance_rate)
     stop  = False
     count = 1
         
     while stop == False:
     
-        nr_samples_to_generate = ceil(1/ (2*acceptance_rate)) *  testing 
+        nr_samples_to_generate = min(ceil(1/ (2*acceptance_rate)) *  testing, 5 * 10**7) 
         samples                = sampler_f_max(size = nr_samples_to_generate)
         #assert nr_samples_to_generate == len(numerator.shape)   
         acceptance_probability = np.prod([pdf(samples) for pdf in other_pdfs],axis=0) / alpha 
@@ -49,7 +51,7 @@ def automated_rej_sampling(sampler_f_max, other_pdfs, f_modes, k, testing = 1):
         
         count +=1 
         
-        if count > 20: #to increase to 75
+        if count > 2000: #to increase to 75
             raise ValueError('the acceptance probability was computed incorrectly')
             
             

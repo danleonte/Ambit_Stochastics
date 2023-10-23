@@ -17,7 +17,7 @@ def fit_trawl_marginal(simulations,levy_seed,method='MLE'):
         raise ValueError('not yet implemented')
         
     elif levy_seed == 'norminvgauss':
-        raise ValueError('not yet implemented')
+        params = [norminvgauss.fit(data = simulation,method = method) for simulation in simulations] 
         
     elif levy_seed == 'geninvgauss':
         raise ValueError('not yet implemented')

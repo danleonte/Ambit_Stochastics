@@ -14,14 +14,28 @@ def find_mode(distr_name, params, area):
         return params[0]
     
     elif distr_name == 'norminvgauss':
-        return find_mode_numerically(distr_name, params)
+        return find_mode_numerically_old(distr_name, params)
     
     raise ValueError('density name not recognised')
     
 
+def find_mode_numerically_from_func(func, lower, upper): #starting_point, ):
+    
+     #if starting_point != None and isinstance(lower,float) and isinstance(upper,float):
+     #elif starting_point == None and lower == None and upper == None:
+     assert isinstance(lower,float) and isinstance(upper,float)
+     return   brent(func = lambda x : - func(x), brack = (lower, upper), tol = 1.48e-06)
+
+         
+    
+         
+     
+     
+     
 
 
-def find_mode_numerically(distr_name, params):
+
+def find_mode_numerically_old(distr_name, params):
     """ inspired from ghypMode in R"""
     
     if distr_name == 'norminvgauss':
